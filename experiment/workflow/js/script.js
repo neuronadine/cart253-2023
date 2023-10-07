@@ -8,11 +8,10 @@
 
 "use strict";
 
-/**
- * Description of preload
-*/
+// preload
+//
+//Description of preload
 function preload() {
-
 }
 
 
