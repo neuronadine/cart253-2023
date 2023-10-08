@@ -39,4 +39,8 @@ function draw() {
     circle.x += circle.speed;
     // circle.speed += circleAccelertion;
     ellipse(circle.x, circle.y, circle.size);
+
+    console.log(`circle.x : ${circle.x}, circle.y : ${circle.y}`)
+    // console.log("circle.x: " + circle.x);
+    // console.log("circle.y: " + circle.y);
 }
