@@ -7,9 +7,11 @@ Nadine Mohamed
  ********************************************************/
 
 let bgShade = 0;
-let circleX = 250;
+let circleX = 0;
 let circleY = 250;
 let circleSize = 200;
+let circleSpeed = 2;
+let circleAccelertion = 0.25;
 
 /**
  * Description of preload
@@ -32,5 +34,8 @@ function setup() {
 */
 function draw() {
     background(bgShade);
+    // circleSize /=  1.01;
+    circleX += circleSpeed;
+    circleSpeed += circleAccelertion;
     ellipse(circleX, circleY, circleSize);
 }
