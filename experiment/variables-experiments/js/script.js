@@ -8,11 +8,11 @@ Nadine Mohamed
 
 let bgShade = 0;
 let circle = {
-    x : 250,
+    x : 0,
     y : 250,
     size : 200,
     speed : 1,
-    fill : 0
+    fill : 255
 };
 
 /**
@@ -36,17 +36,15 @@ function setup() {
 */
 function draw() {
     background(bgShade);
-
-    circle.speed = random(-5, 5);
     circle.x += circle.speed;
-    circle.size = random(0, 200);
 
-    circle.fill = random(0, 255);
+    circle.x = constrain(circle.x, 0, width);
+   
+    circle.size = map(mouseY, 0, height, 50, 500);
+    circle.fill = map(mouseX, 0, width, 0, 255);
     fill(circle.fill);
     ellipse(circle.x, circle.y, circle.size);
 
     // console.log(`circle.x : ${circle.x}, circle.y : ${circle.y}`)
-
-    let randomNumber = random();
     // console.log(randomNumber);
 }
