@@ -9,7 +9,6 @@
 "use strict";
 
 // Global variables declaration
-let root;
 let branches = [];
 let canCreateNewBranches = true;
 
@@ -28,18 +27,23 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
 
     // Start at the bottom center
-    const start = createVector(width / 2, height); 
+    const center = createVector(width /2, height / 2); 
 
-    // End point of the root
-    const end = createVector(width / 2, height - 100); 
-    
-    // Create the root branch
-    root = new Branch(start, end, 0); 
+    // Define directions for intial branches
+    let initialDirections =[];
 
-    // Add it to the array
-    branches.push(root); 
+    initialDirections.push(p5.Vector.fromAngle(PI/4).mult(100));
+    initialDirections.push(p5.Vector.fromAngle(-PI/4).mult(100));
+    initialDirections.push(p5.Vector.fromAngle(3* PI / 4).mult(100));
+    initialDirections.push(p5.Vector.fromAngle(-3* PI / 4).mult(100));
+
+    // Create initial branches based on directions
+    for (let dir of initialDirections) {
+        let branchEnd = p5.Vector.add(center, dir);
+        let newBranch = new Branch(center, branchEnd, 0);
+        branches.push(newBranch);
+    }
 }
-
 
 /**
  * Description of draw()
@@ -60,8 +64,8 @@ function draw() {
         for (let i = branches.length -1; i >=0; i--) {
             if (!branches[i].finished) {
 
-                // limiting the depth of branches
-                if (branches[i].depth < 6) { 
+                // limiting the depth of branches (this controls the complexity)
+                if (branches[i].depth < 10) { 
 
                     // branch to the right
                     let branchA = branches[i].branch(PI / 4);

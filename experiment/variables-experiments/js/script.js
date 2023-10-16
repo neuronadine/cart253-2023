@@ -34,8 +34,7 @@ function setup() {
 /**
  * Description of draw()
 */
-function draw() {
-    background(bgShade);
+
     circle.x += circle.speed;
 
     circle.x = constrain(circle.x, 0, width);
