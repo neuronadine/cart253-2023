@@ -11,6 +11,7 @@
 // Global variables declaration
 let branches = [];
 let canCreateNewBranches = true;
+let growthPoints = [];
 
 /**
  * Description of preload
@@ -26,20 +27,29 @@ function preload() {
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
+    // Scatter Growth Points Accross the Canvas
+    // Create a library to store scattered points
+    for( let x = 0; x <= windowWidth; x += 50) {
+        for (let y = 0; y <= windowHeight; y += 50) {
+            let growthPoint = createVector(x, y);
+            growthPoints.push(growthPoint);
+        }
+    }
+
     // Start at the bottom center
     const center = createVector(width /2, height / 2); 
 
     // Define directions for intial branches
-    let initialDirections =[];
+    let rootBranches = [];
 
-    initialDirections.push(p5.Vector.fromAngle(PI/4).mult(100));
-    initialDirections.push(p5.Vector.fromAngle(-PI/4).mult(100));
-    initialDirections.push(p5.Vector.fromAngle(3* PI / 4).mult(100));
-    initialDirections.push(p5.Vector.fromAngle(-3* PI / 4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(random(10, height / 4)));
+    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(random(10, height / 4)));
+    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(random(10, height / 4)));
+    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(random(10, height / 4)));
 
     // Create initial branches based on directions
-    for (let dir of initialDirections) {
-        let branchEnd = p5.Vector.add(center, dir);
+    for (let branch of rootBranches) {
+        let branchEnd = p5.Vector.add(center, branch);
         let newBranch = new Branch(center, branchEnd, 0);
         branches.push(newBranch);
     }
@@ -50,6 +60,11 @@ function setup() {
 */
 function draw() {
     background(255);
+
+    // TEST - draw growth points
+    for (let growthPoint of growthPoints) {
+        ellipse(growthPoint.x, growthPoint.y, 4, 4);
+    }
 
     // Draw all branches, whether finished or not
     for (let branch of branches) {
@@ -68,10 +83,10 @@ function draw() {
                 if (branches[i].depth < 10) { 
 
                     // branch to the right
-                    let branchA = branches[i].branch(PI / 4);
+                    let branchA = branches[i].branch(PI / 4, random(0.5, 0.9));
 
                     // branch to the left
-                    let branchB = branches[i].branch(-PI / 4);
+                    let branchB = branches[i].branch(-PI / 4, random(0.5, 0.9));
                     branches.push(branchA);
                     branches.push(branchB);
                 }
@@ -114,7 +129,7 @@ class Branch {
         direction.rotate(angle); 
 
         // Reduce the length for the next branch
-        direction.mult(0.67); 
+        direction.mult(random(0.55, 0.85)); 
 
         // Find the end point of the new branch
         const newEnd = p5.Vector.add(this.end, direction); 
@@ -123,3 +138,4 @@ class Branch {
         return new Branch(this.end, newEnd, this.depth + 1); 
     }
 }
+
