@@ -27,10 +27,9 @@ function preload() {
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
-    // Scatter Growth Points Accross the Canvas
     // Create a library to store scattered points
-    for( let x = 0; x <= windowWidth; x += 50) {
-        for (let y = 0; y <= windowHeight; y += 50) {
+    for( let x = 0; x <= windowWidth; x += 10) {
+        for (let y = 0; y <= windowHeight; y += 10) {
             let growthPoint = createVector(x, y);
             growthPoints.push(growthPoint);
         }
@@ -42,10 +41,10 @@ function setup() {
     // Define directions for intial branches
     let rootBranches = [];
 
-    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(random(10, height / 4)));
-    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(random(10, height / 4)));
-    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(random(10, height / 4)));
-    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(random(10, height / 4)));
+    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(random(1, 10)));
+    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(random(1, 10)));
+    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(random(1, 10)));
+    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(random(1, 10)));
 
     // Create initial branches based on directions
     for (let branch of rootBranches) {
@@ -82,7 +81,6 @@ function draw() {
             if (!branch.finished) {
 
                 // Grow towards the closest point
-                // IMP - NEEDS TO BE DEFINED
                 let closestPoint = findClosestPoint(branch.end);
 
                 if (closestPoint) {
@@ -180,7 +178,7 @@ class Branch {
         const newEnd = p5.Vector.add(this.end, dir);
 
         // New branch with incremented depth
-        return new Branch(this.end, newEnd, this.depth + 1);
+        return new Branch(this.end, newEnd, this.depth + random(1, 100));
     }
 
 }
