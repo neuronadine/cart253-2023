@@ -73,24 +73,25 @@ function draw() {
         // Temporarily stop new branches from being created
         canCreateNewBranches = false;
 
-        let newBranches = [];
 
         for (let i = branches.length -1; i >=0; i--) {
 
             let branch = branches[i];
             if (!branch.finished) {  
 
-                if (random(1.0) < 0.5) {
+                // Random Space Colonization
+                if (random(1.0) < 0.3) {
         
-                // Grow towards the closest point
+                // Find closest growth point
                 let closestPoint = findClosestPoint(branch.end);
                     
+                // Grow towards the closest point
                 if (closestPoint) {
                     let newBranch = branch.growTowards(closestPoint);
                     branches.push(newBranch);
                     growthPoints = growthPoints.filter(point => point !== closestPoint);
                     }
-                } else {
+                } else { // Branch prolifiration
                     if (branches[i].depth < 10) {
 
                         let branchA = branches[i].branch(PI / 4);
@@ -98,21 +99,21 @@ function draw() {
 
                         branches.push(branchA);
                         branches.push(branchB);
-                        // newBranches.push(branch.branch(PI / 4));
-                        // newBranches.push(branch.branch(-PI / 4));
                     }
                     // Prevent further branching from this branch
                     branches[i].finished = true; 
                 }   
             }
-
-            // After the loop, you can merge the new branches
-            // branches = branches.concat(newBranches);
-
+    
+            // branch.show();
             // Use setTimeout to allow new branches after some time has passed
             setTimeout(() => {
                 canCreateNewBranches = true;
             }, 500);
+
+            // if (random(1.0) < 0.5 && branches.length > 0) {
+            //     branches.pop()
+            // }
         } 
     }
 }
@@ -143,7 +144,7 @@ class Branch {
         direction.rotate(angle); 
 
         // Reduce the length for the next branch
-        direction.mult(random(0.55, 1)); 
+        direction.mult(random(0.55, 1.1)); 
 
         // Calculate the newEnd based on the direction to the nearest growth.
         const newEnd = p5.Vector.add(this.end, direction); 
@@ -173,6 +174,7 @@ class Branch {
 
 // Function to find the closest growth point to a given position
 function findClosestPoint(position) {
+
     // this function should return the closest growth point to the provided position
     let closest = null;
     let closestDist = Infinity;
