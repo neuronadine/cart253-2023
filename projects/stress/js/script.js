@@ -41,10 +41,10 @@ function setup() {
     // Define directions for intial branches
     let rootBranches = [];
 
-    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(random(1, 10)));
-    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(random(1, 10)));
-    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(random(1, 10)));
-    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(random(1, 10)));
+    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(random(50, 100)));
+    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(random(50, 100)));
+    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(random(50, 100)));
+    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(random(50, 100)));
 
     // Create initial branches based on directions
     for (let branch of rootBranches) {
@@ -87,6 +87,16 @@ function draw() {
                     let newBranch = branch.growTowards(closestPoint);
                     newBranches.push(newBranch);
                     growthPoints = growthPoints.filter(point => point !== closestPoint);
+                
+                    if (newBranch.depth < 200) {
+                        let branchA = newBranch.branch(PI / 4); // branch to the right
+                        let branchB = newBranch.branch(-PI / 4); // branch to the left
+
+                        newBranches.push(branchA);
+                        newBranches.push(branchB);
+                    }
+                
+                
                 }
 
                 // This branch won't grow further
