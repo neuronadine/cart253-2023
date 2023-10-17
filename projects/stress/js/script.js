@@ -11,6 +11,11 @@
 let branches = [];
 let canCreateNewBranches = true;
 let growthPoints = [];
+let branchesToEvaluate = [];
+
+let previousMouseX = 0;
+let previousMouseY = 0;
+let mouseVelocity = 0;
 
 /**
  * Description of preload
@@ -57,6 +62,14 @@ function setup() {
  * Description of draw()
 */
 function draw() {
+    // Calculate the mouse velocity
+    let mouseMovedDistance = dist(mouseX, mouseY, previousMouseX, previousMouseY);
+    mouseVelocity = mouseMovedDistance; // You could apply some scaling factor here if needed
+
+    // Update the previous mouse position for the next frame
+    previousMouseX = mouseX;
+    previousMouseY = mouseY;
+
     background(255);
 
     // Draw growth points - REMOVE
@@ -89,6 +102,8 @@ function draw() {
                 if (closestPoint) {
                     let newBranch = branch.growTowards(closestPoint);
                     branches.push(newBranch);
+                    // branches.push(newBranch);
+                    branchesToEvaluate.push({ branch: newBranch, parent: branch });
                     growthPoints = growthPoints.filter(point => point !== closestPoint);
                     }
                 } else { // Branch prolifiration
@@ -99,6 +114,9 @@ function draw() {
 
                         branches.push(branchA);
                         branches.push(branchB);
+
+                        branchesToEvaluate.push({ branch: branchA, parent: branch });
+                        branchesToEvaluate.push({ branch: branchA, parent: branch });
                     }
                     // Prevent further branching from this branch
                     branches[i].finished = true; 
@@ -115,6 +133,18 @@ function draw() {
             //     branches.pop()
             // }
         } 
+
+        branchesToEvaluate.forEach((item, index) => {
+
+            let removalChance = map(mouseVelocity, 0, 100, 0.0, 0.3); 
+            removalChance = constrain(removalChance, 0, 1);
+
+            if (random(1.0) < removalChance) {
+                branches = branches.filter(branch => branch !== item.branch);
+                item.parent.finished = false;
+                branchesToEvaluate.splice(index, 1);
+            }
+        });
     }
 }
 
@@ -144,7 +174,7 @@ class Branch {
         direction.rotate(angle); 
 
         // Reduce the length for the next branch
-        direction.mult(random(0.55, 1.1)); 
+        direction.mult(random(0.45, 0.95)); 
 
         // Calculate the newEnd based on the direction to the nearest growth.
         const newEnd = p5.Vector.add(this.end, direction); 
