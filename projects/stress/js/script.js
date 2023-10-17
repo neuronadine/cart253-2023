@@ -21,7 +21,6 @@ let mouseVelocity = 0;
  * Description of preload
 */
 function preload() {
-
 }
 
 
@@ -45,10 +44,10 @@ function setup() {
     // Define directions for intial branches
     let rootBranches = [];
 
-    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(random(1, 500)));
-    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(random(1, 500)));
-    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(random(1, 500)));
-    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(random(1, 500)));
+    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(100));
 
     // Create initial branches based on directions
     for (let branch of rootBranches) {
@@ -93,7 +92,7 @@ function draw() {
             if (!branch.finished) {  
 
                 // Random Space Colonization
-                if (random(1.0) < 0.3) {
+                if (random(1.0) < 0.3 && branches[i].depth < 15) {
         
                 // Find closest growth point
                 let closestPoint = findClosestPoint(branch.end);
@@ -102,12 +101,14 @@ function draw() {
                 if (closestPoint) {
                     let newBranch = branch.growTowards(closestPoint);
                     branches.push(newBranch);
-                    // branches.push(newBranch);
                     branchesToEvaluate.push({ branch: newBranch, parent: branch });
                     growthPoints = growthPoints.filter(point => point !== closestPoint);
                     }
+                // Prevent further branching from this branch
+                branches[i].finished = true;
+
                 } else { // Branch prolifiration
-                    if (branches[i].depth < 10) {
+                    if (branches[i].depth < 15) {
 
                         let branchA = branches[i].branch(PI / 4);
                         let branchB = branches[i].branch(-PI / 4);
@@ -122,29 +123,28 @@ function draw() {
                     branches[i].finished = true; 
                 }   
             }
-    
-            // branch.show();
+
             // Use setTimeout to allow new branches after some time has passed
             setTimeout(() => {
                 canCreateNewBranches = true;
             }, 500);
-
-            // if (random(1.0) < 0.5 && branches.length > 0) {
-            //     branches.pop()
-            // }
         } 
 
-        branchesToEvaluate.forEach((item, index) => {
-
-            let removalChance = map(mouseVelocity, 0, 100, 0.0, 0.3); 
+        // Calculate how many branches to potentially remove based on mouse velocity
+        let removalIntensity = map(mouseVelocity, 0, 100, 0, branchesToEvaluate.length);
+        removalIntensity = Math.round(removalIntensity); // ensure it's an integer
+        
+            // Loop through the branches, starting from the end of the array
+        for (let i = branchesToEvaluate.length - 1; i >= branchesToEvaluate.length - removalIntensity && i >= 0; i--) {
+            let removalChance = map(mouseVelocity, 0, 100, 0.0, 1); 
             removalChance = constrain(removalChance, 0, 1);
 
             if (random(1.0) < removalChance) {
-                branches = branches.filter(branch => branch !== item.branch);
-                item.parent.finished = false;
-                branchesToEvaluate.splice(index, 1);
+                branches = branches.filter(branch => branch !== branchesToEvaluate[i].branch);
+                branchesToEvaluate[i].parent.finished = false;
+                branchesToEvaluate.splice(i, 1);
             }
-        });
+        }
     }
 }
 
@@ -174,7 +174,7 @@ class Branch {
         direction.rotate(angle); 
 
         // Reduce the length for the next branch
-        direction.mult(random(0.45, 0.95)); 
+        direction.mult(random(0.55, 0.95)); 
 
         // Calculate the newEnd based on the direction to the nearest growth.
         const newEnd = p5.Vector.add(this.end, direction); 
@@ -190,14 +190,21 @@ class Branch {
         // You might want to normalize the vector so that all branches grow at a consistent rate
         dir.normalize();
 
-        // Adjust this to control the growth speed
-        dir.mult(2); 
+        // Calculate the current branch's direction and length
+        let currentBranchVector = p5.Vector.sub(this.end, this.start);
+        let currentBranchLength = currentBranchVector.mag();
+
+        // Set the length of the new branch to be 0.75 of the original branch's length
+        let newLength = currentBranchLength * random(0.55, 0.75);
+
+        // Scale the direction vector to maintain the growth towards the point
+        dir.mult(newLength);
 
         // Create the new branch
         const newEnd = p5.Vector.add(this.end, dir);
 
         // New branch with incremented depth
-        return new Branch(this.end, newEnd, this.depth + 100);
+        return new Branch(this.end, newEnd, this.depth + 1);
     }
 
 }
@@ -218,119 +225,3 @@ function findClosestPoint(position) {
     }
     return closest;  // may be null if no points are left
 }
-
-
-
-        // // Find the nearest growth point to the current branch
-        // let closestGrowthPoint = null;
-        // let closestDistance = Infinity;
-        // let closestGrowthPointIndex = -1;
-
-        // for (let i = 0; i < growthPoints.length; i++) {
-        //     let d = dist(growthPoints[i].x, growthPoints[i].y, this.end.x, this.end.y);
-
-        //     if (d < closestDistance) {
-        //         closestDistance = d;
-        //         closestGrowthPoint = growthPoints[i];
-        //         closestGrowthPointIndex = i;
-        //     }
-        // }
-
-        // if (closestGrowthPointIndex != -1) {
-        //     growthPoints.splice(closestGrowthPointIndex, 1);
-        // }
-
-        // // Find the direction the the nearest growth point
-        // let direction;
-        // if (closestGrowthPoint != null) {
-        //     direction = p5.Vector.sub(closestGrowthPoint, this.end);
-        // } else {
-        //     direction = p5.Vector.sub(this.end, this.start); 
-        // }
-        
-
-
-        // function draw() {
-        //     background(255);
-        
-        //     // Draw growth points - REMOVE
-        //     for (let growthPoint of growthPoints) {
-        //         ellipse(growthPoint.x, growthPoint.y, 4, 4);
-        //     }
-        
-        //     // Draw all branches, whether finished or not
-        //     for (let branch of branches) {
-        //         branch.show();
-        //     }
-        
-        //     if (canCreateNewBranches) {
-        //         // Temporarily stop new branches from being created
-        //         canCreateNewBranches = false;
-        
-        //         // Stores branches grown in this cycle
-        //         let newBranches = [];
-        
-        //         for (let branch of branches) {
-        //             if (!branch.finished) {
-        
-        //                 if (random(1.0) < 0.1) {
-        
-        //                 // Grow towards the closest point
-        //                 let closestPoint = findClosestPoint(branch.end);
-        
-        //                     if (closestPoint) {
-        //                         let newBranch = branch.growTowards(closestPoint);
-        //                         newBranches.push(newBranch);
-        //                         growthPoints = growthPoints.filter(point => point !== closestPoint);
-                            
-        //                         if (newBranch.depth < 10) {
-        //                             let branchA = newBranch.branch(PI / 4); // branch to the right
-        //                             let branchB = newBranch.branch(-PI / 4); // branch to the left
-        //                             let branchC = newBranch.branch(3 * PI / 4); // branch to the right
-        //                             let branchD = newBranch.branch(-3 * PI / 4); // branch to the left
-        
-        //                             newBranches.push(branchA);
-        //                             newBranches.push(branchB);
-        //                             newBranches.push(branchC);
-        //                             newBranches.push(branchD);
-        //                         } 
-        //                     }   
-        //                 } else {
-        //                     // let newDirection = p5.Vector.sub(branch.end, branch.start);
-        //                     // newDirection.normalize();
-        //                     // newDirection.mult(random(10, 20)); // You might want to change the multiplier.
-        
-        //                     // let newEnd = p5.Vector.add(branch.end, newDirection);
-        //                     // let newBranch = new Branch(branch.end, newEnd, branch.depth + 1);
-        //                     // newBranches.push(newBranch);
-                        
-                                    
-        //                     if (branch.depth < 10) {
-        //                         let branchA = branch.branch(PI / 4); // branch to the right
-        //                         let branchB = branch.branch(-PI / 4); // branch to the left
-        //                         let branchC = branch.branch(3 * PI / 4); // branch to the right
-        //                         let branchD = branch.branch(-3 * PI / 4); // branch to the left
-        
-        //                         branch.push(branchA);
-        //                         branch.push(branchB);
-        //                         branch.push(branchC);
-        //                         branch.push(branchD);
-        
-        //                     }
-        //                 }
-        
-        //                 // This branch won't grow further
-        //                 branch.finished = true; 
-        //             }
-        //         }
-        
-        //         // Add new branches to the main list
-        //         // branches.push(...newBranches);
-        
-        //         // Use setTimeout to allow new branches after some time has passed
-        //         setTimeout(() => {
-        //             canCreateNewBranches = true;
-        //         }, 500);
-        //     }
-        // }
-        
