@@ -73,9 +73,11 @@ function draw() {
 
     // Draw growth points - REMOVE
     for (let growthPoint of growthPoints) {
+        stroke(0,255,0);
         ellipse(growthPoint.x, growthPoint.y, 2, 2);
     }
 
+    
     // Draw all branches, whether finished or not
     for (let branch of branches) {
         branch.show();
@@ -127,7 +129,7 @@ function draw() {
             // Use setTimeout to allow new branches after some time has passed
             setTimeout(() => {
                 canCreateNewBranches = true;
-            }, 500);
+            }, 1000);
         } 
 
         // Calculate how many branches to potentially remove based on mouse velocity
@@ -141,7 +143,7 @@ function draw() {
 
             if (random(1.0) < removalChance) {
                 branches = branches.filter(branch => branch !== branchesToEvaluate[i].branch);
-                branchesToEvaluate[i].parent.finished = false;
+                // branchesToEvaluate[i].parent.finished = false;
                 branchesToEvaluate.splice(i, 1);
             }
         }
