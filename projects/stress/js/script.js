@@ -61,7 +61,7 @@ function setup() {
 function draw() {
     background(255);
 
-    // TEST - draw growth points
+    // Draw growth points - REMOVE
     for (let growthPoint of growthPoints) {
         ellipse(growthPoint.x, growthPoint.y, 4, 4);
     }
@@ -75,30 +75,34 @@ function draw() {
         // Temporarily stop new branches from being created
         canCreateNewBranches = false;
 
-        // Create new branches
-        for (let i = branches.length -1; i >=0; i--) {
-            if (!branches[i].finished) {
+        // Stores branches grown in this cycle
+        let newBranches = [];
 
-                // limiting the depth of branches (this controls the complexity)
-                if (branches[i].depth < 10) { 
+        for (let branch of branches) {
+            if (!branch.finished) {
 
-                    // branch to the right
-                    let branchA = branches[i].branch(PI / 4, random(0.5, 0.9));
+                // Grow towards the closest point
+                // IMP - NEEDS TO BE DEFINED
+                let closestPoint = findClosestPoint(branch.end);
 
-                    // branch to the left
-                    let branchB = branches[i].branch(-PI / 4, random(0.5, 0.9));
-                    branches.push(branchA);
-                    branches.push(branchB);
+                if (closestPoint) {
+                    let newBranch = branch.growTowards(closestPoint);
+                    newBranches.push(newBranch);
+                    growthPoints = growthPoints.filter(point => point !== closestPoint);
                 }
-            
-                // prevent further branching from this branch
-                branches[i].finished = true;
+
+                // This branch won't grow further
+                branch.finished = true; 
             }
         }
+
+        // Add new branches to the main list
+        branches.push(...newBranches);
+
         // Use setTimeout to allow new branches after some time has passed
         setTimeout(() => {
             canCreateNewBranches = true;
-        }, 500); // 500ms delay before new branches can be created
+        }, 500);
     }
 }
 
@@ -120,10 +124,34 @@ class Branch {
     }
 
     // creates a new branch through an angle
-    branch( angle) {
+    branch(angle) {
 
-        // Get the direction of the current branch
-        const direction = p5.Vector.sub(this.end, this.start); 
+        // Find the nearest growth point to the current branch
+        let closestGrowthPoint = null;
+        let closestDistance = Infinity;
+        let closestGrowthPointIndex = -1;
+
+        for (let i = 0; i < growthPoints.length; i++) {
+            let d = dist(growthPoints[i].x, growthPoints[i].y, this.end.x, this.end.y);
+
+            if (d < closestDistance) {
+                closestDistance = d;
+                closestGrowthPoint = growthPoints[i];
+                closestGrowthPointIndex = i;
+            }
+        }
+
+        if (closestGrowthPointIndex != -1) {
+            growthPoints.splice(closestGrowthPointIndex, 1);
+        }
+
+        // Find the direction the the nearest growth point
+        let direction;
+        if (closestGrowthPoint != null) {
+            direction = p5.Vector.sub(closestGrowthPoint, this.end);
+        } else {
+            direction = p5.Vector.sub(this.end, this.start); 
+        }
         
         // Rotate by a certain angle
         direction.rotate(angle); 
@@ -131,11 +159,45 @@ class Branch {
         // Reduce the length for the next branch
         direction.mult(random(0.55, 0.85)); 
 
-        // Find the end point of the new branch
+        // Calculate the newEnd based on the direction to the nearest growth.
         const newEnd = p5.Vector.add(this.end, direction); 
 
         // Return the new branch
         return new Branch(this.end, newEnd, this.depth + 1); 
     }
+
+    growTowards(point) {
+        // Vector pointing from the branch tip to the point
+        let dir = p5.Vector.sub(point, this.end);
+
+        // You might want to normalize the vector so that all branches grow at a consistent rate
+        dir.normalize();
+
+        // Adjust this to control the growth speed
+        dir.mult(2); 
+
+        // Create the new branch
+        const newEnd = p5.Vector.add(this.end, dir);
+
+        // New branch with incremented depth
+        return new Branch(this.end, newEnd, this.depth + 1);
+    }
+
 }
 
+// Function to find the closest growth point to a given position
+function findClosestPoint(position) {
+    // this function should return the closest growth point to the provided position
+    let closest = null;
+    let closestDist = Infinity;
+
+    for (let point of growthPoints) {
+        let d = p5.Vector.dist(position, point);
+        if (d < closestDist) {
+            closestDist = d;
+            closest = point;
+        }
+    }
+
+    return closest;  // may be null if no points are left
+}
