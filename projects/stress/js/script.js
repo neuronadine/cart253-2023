@@ -51,85 +51,88 @@ function draw() {
     previousMouseY = mouseY;
 
     // Set background colour
-    background(255);
 
-    // Draw growth points
-    for (let growthPoint of growthPoints) {
-        stroke(0,255,0);
-        ellipse(growthPoint.x, growthPoint.y, 2, 2);
-    }
+    if (simulationStarted) {
+        background(242, 242, 242);
 
-    // Draw all branches, whether finished or not
-    for (let branch of branches) {
-        branch.show();
-    }
-
-    // Remove recent branches based on mouse velocity
-    if (mouseVelocity > 100) {
-        // Filter out the branchesToRemove from the main branches array
-        let branchesLastFrame = recentBranchesByFrame.get(frameCount - 1) || [];
-        branches = branches.filter(branch => { //!branchesLastFrame.includes(branch));
-            if (branchesLastFrame.includes(branch)) {
-                if (branch.parent && !branch.parent.finished) {
-                    branch.parent.resetFinished();
-                }
-                return false;
-            }
-            return true;
-        });
-
-        // Clear the record for the last frame to free up memory
-        recentBranchesByFrame.delete(frameCount - 1);
-
-        // Do not proceed to add new branches
-        return;
-    } 
-    
-    if (frameCount % 10 == 0) {
-        // New branches stored here
-        let branchesThisFrame = [];
-
-        for (let i = branches.length -1; i >=0; i--) {
-            let branch = branches[i];
-            if (!branch.finished) {  
-
-                // Random Space Colonization
-                if (random(1.0) < 0.3 && branches[i].depth < 15) {
-
-                // Find closest growth point
-                let closestPoint = findClosestPoint(branch.end);
-                    
-                // Grow towards the closest point
-                if (closestPoint) {
-                    let newBranch = branch.growTowards(closestPoint, this);
-                    branches.push(newBranch);
-                    branchesThisFrame.push(newBranch);
-                    growthPoints = growthPoints.filter(point => point !== closestPoint);
-                }
-
-                // Prevent further branching from this branch
-                branches[i].finished = true;
-                } else { // Branch prolifiration
-                    if (branches[i].depth < 15) {
-                        let branchA = branches[i].branch(PI / 4, this);
-                        let branchB = branches[i].branch(-PI / 4, this);
-
-                        branches.push(branchA);
-                        branches.push(branchB);
-
-                        // Instead of branches to evaluate, store in temp memory
-                        branchesThisFrame.push(branchA);
-                        branchesThisFrame.push(branchB);
-                    }
-                    // Prevent further branching from this branch
-                    branches[i].finished = true; 
-                }   
-            }
+        // Draw growth points
+        for (let growthPoint of growthPoints) {
+            stroke(0,255,0);
+            ellipse(growthPoint.x, growthPoint.y, 2, 2);
         }
 
-        // If any new branches were created this frame, store them in the map
-        if (branchesThisFrame.length > 0) {
-            recentBranchesByFrame.set(frameCount, branchesThisFrame);
+        // Draw all branches, whether finished or not
+        for (let branch of branches) {
+            branch.show();
+        }
+
+        // Remove recent branches based on mouse velocity
+        if (mouseVelocity > 100) {
+            // Filter out the branchesToRemove from the main branches array
+            let branchesLastFrame = recentBranchesByFrame.get(frameCount - 1) || [];
+            branches = branches.filter(branch => { //!branchesLastFrame.includes(branch));
+                if (branchesLastFrame.includes(branch)) {
+                    if (branch.parent && !branch.parent.finished) {
+                        branch.parent.resetFinished();
+                    }
+                    return false;
+                }
+                return true;
+            });
+
+            // Clear the record for the last frame to free up memory
+            recentBranchesByFrame.delete(frameCount - 1);
+
+            // Do not proceed to add new branches
+            return;
+        } 
+        
+        if (frameCount % 10 == 0) {
+            // New branches stored here
+            let branchesThisFrame = [];
+
+            for (let i = branches.length -1; i >=0; i--) {
+                let branch = branches[i];
+                if (!branch.finished) {  
+
+                    // Random Space Colonization
+                    if (random(1.0) < 0.3 && branches[i].depth < 15) {
+
+                    // Find closest growth point
+                    let closestPoint = findClosestPoint(branch.end);
+                        
+                    // Grow towards the closest point
+                    if (closestPoint) {
+                        let newBranch = branch.growTowards(closestPoint, this);
+                        branches.push(newBranch);
+                        branchesThisFrame.push(newBranch);
+                        growthPoints = growthPoints.filter(point => point !== closestPoint);
+                    }
+
+                    // Prevent further branching from this branch
+                    branches[i].finished = true;
+                    } else { // Branch prolifiration
+                        if (branches[i].depth < 15) {
+                            let branchA = branches[i].branch(PI / 4, this);
+                            let branchB = branches[i].branch(-PI / 4, this);
+
+                            branches.push(branchA);
+                            branches.push(branchB);
+
+                            // Instead of branches to evaluate, store in temp memory
+                            branchesThisFrame.push(branchA);
+                            branchesThisFrame.push(branchB);
+                        }
+                        // Prevent further branching from this branch
+                        branches[i].finished = true; 
+                    }   
+                }
+            }
+
+            // If any new branches were created this frame, store them in the map
+            if (branchesThisFrame.length > 0) {
+                recentBranchesByFrame.set(frameCount, branchesThisFrame);
+            }
         }
     }
 }
@@ -163,6 +166,7 @@ function growthSimulation() {
         branches.push(newBranch);
     }
 }
+
 
 
 class Branch {
@@ -250,6 +254,23 @@ function findClosestPoint(position) {
 function titleScreen() {
     background(0, 44, 99);
 
+    // Title
+    textSize(24);
+    fill(242, 242, 242);
+    textAlign(LEFT, CENTER);
+    text("Stress Tree", 0, windowHeight / 8, windowWidth - 40);
+
+    // Preface
+    textSize(14);
+    fill(242, 242, 242);
+    textAlign(LEFT, CENTER);
+    text(`This simulation visualizes the complexity and persistence of anxious thoughts, with growth influenced by real-time brain signals during stress responses. As you interact with your clicks, ponder the nature of your influence on the unfolding patterns.`
+            , 0, windowHeight / 2 - 100, windowWidth - 40);
+
+
+    // Add Background Mouvement
+
+    // Add Simulation button
     let button = createButton('Start Simulation');
     button.position(width/2 - button.size().width/2, height/2);
     button.mousePressed(initSimulation);
