@@ -17,6 +17,8 @@ let previousMouseX = 0;
 let previousMouseY = 0;
 let mouseVelocity = 0;
 
+
+
 /**
  * Description of preload
 */
@@ -78,12 +80,14 @@ function draw() {
     }
 
     
+
+    
     // Draw all branches, whether finished or not
     for (let branch of branches) {
         branch.show();
     }
 
-    if (canCreateNewBranches) {
+    if (frameCount % 10 == 0) {
         // Temporarily stop new branches from being created
         canCreateNewBranches = false;
 
@@ -143,7 +147,6 @@ function draw() {
 
             if (random(1.0) < removalChance) {
                 branches = branches.filter(branch => branch !== branchesToEvaluate[i].branch);
-                // branchesToEvaluate[i].parent.finished = false;
                 branchesToEvaluate.splice(i, 1);
             }
         }
