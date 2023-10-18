@@ -17,7 +17,8 @@ let previousMouseX = 0;
 let previousMouseY = 0;
 let mouseVelocity = 0;
 
-
+let recentBranches = [];
+let recentBranchesByFrame = new Map();
 
 /**
  * Description of preload
@@ -65,90 +66,92 @@ function setup() {
 function draw() {
     // Calculate the mouse velocity
     let mouseMovedDistance = dist(mouseX, mouseY, previousMouseX, previousMouseY);
-    mouseVelocity = mouseMovedDistance; // You could apply some scaling factor here if needed
+    mouseVelocity = mouseMovedDistance;
 
     // Update the previous mouse position for the next frame
     previousMouseX = mouseX;
     previousMouseY = mouseY;
 
+    // Set background colour
     background(255);
 
-    // Draw growth points - REMOVE
+    // Draw growth points
     for (let growthPoint of growthPoints) {
         stroke(0,255,0);
         ellipse(growthPoint.x, growthPoint.y, 2, 2);
     }
 
-    
-
-    
     // Draw all branches, whether finished or not
     for (let branch of branches) {
         branch.show();
     }
 
-    if (frameCount % 10 == 0) {
-        // Temporarily stop new branches from being created
-        canCreateNewBranches = false;
+    // Remove recent branches based on mouse velocity
+    if (mouseVelocity > 100) {
+        // Filter out the branchesToRemove from the main branches array
+        let branchesLastFrame = recentBranchesByFrame.get(frameCount - 1) || [];
+        branches = branches.filter(branch => { //!branchesLastFrame.includes(branch));
+            if (branchesLastFrame.includes(branch)) {
+                if (branch.parent && !branch.parent.finished) {
+                    branch.parent.resetFinished();
+                }
+                return false;
+            }
+            return true;
+        });
 
+        // Clear the record for the last frame to free up memory
+        recentBranchesByFrame.delete(frameCount - 1);
+
+        // Do not proceed to add new branches
+        return;
+    } 
+    
+    if (frameCount % 10 == 0) {
+        // New branches stored here
+        let branchesThisFrame = [];
 
         for (let i = branches.length -1; i >=0; i--) {
-
             let branch = branches[i];
             if (!branch.finished) {  
 
                 // Random Space Colonization
                 if (random(1.0) < 0.3 && branches[i].depth < 15) {
-        
+
                 // Find closest growth point
                 let closestPoint = findClosestPoint(branch.end);
                     
                 // Grow towards the closest point
                 if (closestPoint) {
-                    let newBranch = branch.growTowards(closestPoint);
+                    let newBranch = branch.growTowards(closestPoint, this);
                     branches.push(newBranch);
-                    branchesToEvaluate.push({ branch: newBranch, parent: branch });
+                    branchesThisFrame.push(newBranch);
                     growthPoints = growthPoints.filter(point => point !== closestPoint);
-                    }
+                }
+
                 // Prevent further branching from this branch
                 branches[i].finished = true;
-
                 } else { // Branch prolifiration
                     if (branches[i].depth < 15) {
-
-                        let branchA = branches[i].branch(PI / 4);
-                        let branchB = branches[i].branch(-PI / 4);
+                        let branchA = branches[i].branch(PI / 4, this);
+                        let branchB = branches[i].branch(-PI / 4, this);
 
                         branches.push(branchA);
                         branches.push(branchB);
 
-                        branchesToEvaluate.push({ branch: branchA, parent: branch });
-                        branchesToEvaluate.push({ branch: branchA, parent: branch });
+                        // Instead of branches to evaluate, store in temp memory
+                        branchesThisFrame.push(branchA);
+                        branchesThisFrame.push(branchB);
                     }
                     // Prevent further branching from this branch
                     branches[i].finished = true; 
                 }   
             }
+        }
 
-            // Use setTimeout to allow new branches after some time has passed
-            setTimeout(() => {
-                canCreateNewBranches = true;
-            }, 1000);
-        } 
-
-        // Calculate how many branches to potentially remove based on mouse velocity
-        let removalIntensity = map(mouseVelocity, 0, 100, 0, branchesToEvaluate.length);
-        removalIntensity = Math.round(removalIntensity); // ensure it's an integer
-        
-            // Loop through the branches, starting from the end of the array
-        for (let i = branchesToEvaluate.length - 1; i >= branchesToEvaluate.length - removalIntensity && i >= 0; i--) {
-            let removalChance = map(mouseVelocity, 0, 100, 0.0, 1); 
-            removalChance = constrain(removalChance, 0, 1);
-
-            if (random(1.0) < removalChance) {
-                branches = branches.filter(branch => branch !== branchesToEvaluate[i].branch);
-                branchesToEvaluate.splice(i, 1);
-            }
+        // If any new branches were created this frame, store them in the map
+        if (branchesThisFrame.length > 0) {
+            recentBranchesByFrame.set(frameCount, branchesThisFrame);
         }
     }
 }
@@ -157,11 +160,13 @@ function draw() {
 
 
 class Branch {
-    constructor(start, end, depth) {
+    constructor(start, end, depth, parent) {
         this.start = start;
         this.end = end;
         this.finished = false;
         this.depth = depth;
+
+        this.parent = parent;
     }
 
     // Draws a new branch
@@ -171,7 +176,7 @@ class Branch {
     }
 
     // creates a new branch through an angle
-    branch(angle) {
+    branch(angle, parent) {
         // Get the direction of the current branch
         const direction = p5.Vector.sub(this.end, this.start); 
 
@@ -185,10 +190,10 @@ class Branch {
         const newEnd = p5.Vector.add(this.end, direction); 
 
         // Return the new branch
-        return new Branch(this.end, newEnd, this.depth + 1); 
+        return new Branch(this.end, newEnd, this.depth + 1, parent); 
     }
 
-    growTowards(point) {
+    growTowards(point, parent) {
         // Vector pointing from the branch tip to the point
         let dir = p5.Vector.sub(point, this.end);
 
@@ -209,7 +214,11 @@ class Branch {
         const newEnd = p5.Vector.add(this.end, dir);
 
         // New branch with incremented depth
-        return new Branch(this.end, newEnd, this.depth + 1);
+        return new Branch(this.end, newEnd, this.depth + 1, parent);
+    }
+
+    resetFinished() {
+        this.finished = false;
     }
 
 }
