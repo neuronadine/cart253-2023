@@ -20,6 +20,9 @@ let mouseVelocity = 0;
 let recentBranches = [];
 let recentBranchesByFrame = new Map();
 
+// Flag to check if simulation started
+let simulationStarted = false;
+
 /**
  * Description of preload
 */
@@ -30,36 +33,11 @@ function preload() {
 /**
  * Description of setup
 */
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
-
-    // Create a library to store scattered points
-    for( let x = 0; x <= windowWidth; x += 10) {
-        for (let y = 0; y <= windowHeight; y += 10) {
-            let growthPoint = createVector(x, y);
-            growthPoints.push(growthPoint);
-        }
-    }
-
-    // Start at the center of the screen
-    const center = createVector(width /2, height / 2); 
-
-    // Define directions for intial branches
-    let rootBranches = [];
-
-    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(100));
-    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(100));
-    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(100));
-    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(100));
-
-    // Create initial branches based on directions
-    for (let branch of rootBranches) {
-        let branchEnd = p5.Vector.add(center, branch);
-        let newBranch = new Branch(center, branchEnd, 0);
-        branches.push(newBranch);
-    }
+    titleScreen();
 }
-
 /**
  * Description of draw()
 */
@@ -157,6 +135,34 @@ function draw() {
 }
 
 
+// Function to start simulation
+function growthSimulation() {
+    // Create a library to store scattered points
+    for( let x = 0; x <= windowWidth; x += 10) {
+        for (let y = 0; y <= windowHeight; y += 10) {
+            let growthPoint = createVector(x, y);
+            growthPoints.push(growthPoint);
+        }
+    }
+
+    // Start at the center of the screen
+    const center = createVector(width /2, height / 2); 
+
+    // Define directions for intial branches
+    let rootBranches = [];
+
+    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(100));
+
+    // Create initial branches based on directions
+    for (let branch of rootBranches) {
+        let branchEnd = p5.Vector.add(center, branch);
+        let newBranch = new Branch(center, branchEnd, 0);
+        branches.push(newBranch);
+    }
+}
 
 
 class Branch {
@@ -171,7 +177,7 @@ class Branch {
 
     // Draws a new branch
     show() {
-        stroke(0);
+        stroke(0, 44, 99);
         line(this.start.x, this.start.y, this.end.x, this.end.y);
     }
 
@@ -238,4 +244,20 @@ function findClosestPoint(position) {
         }
     }
     return closest;  // may be null if no points are left
+}
+
+// Function too initiate title screen
+function titleScreen() {
+    background(0, 44, 99);
+
+    let button = createButton('Start Simulation');
+    button.position(width/2 - button.size().width/2, height/2);
+    button.mousePressed(initSimulation);
+}
+
+// Function to start simulation
+function initSimulation() {
+    simulationStarted = true;
+    this.remove();
+    growthSimulation();
 }
