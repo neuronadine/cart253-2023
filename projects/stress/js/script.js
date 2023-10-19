@@ -12,15 +12,35 @@ let branches = [];
 let growthPoints = [];
 let removedGrowthPoints = [];
 let simulationStarted = false;
+let eegData = [];
+let table;
 
 // Pre-setup, can be used for loading assets
 function preload() {
+    table = loadTable('assets/EEG Data.csv', 'csv');
 }
 
 // Initial setup function for p5
 function setup() {
     createCanvas(windowWidth, windowHeight);
     titleScreen();
+
+    print(table);
+
+    // Now, we need to check if the table has data.
+    if (table.getRowCount() === 0) {
+        console.error("No data in table!");
+        return;
+    }
+
+    // Assuming there's only one row, but multiple columns
+    let row=table.getRow(0);
+
+    // Extract data from each column
+    for (let col of table.columns) {
+        eegData[col] = row.getNum(col);
+    }
+    console.log(eegData);
 }
 
 // Main Continous Drawing function 
