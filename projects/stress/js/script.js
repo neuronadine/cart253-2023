@@ -17,7 +17,6 @@ let simulationStarted = false;
 function preload() {
 }
 
-
 // Initial setup function for p5
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -26,43 +25,21 @@ function setup() {
 
 // Main Continous Drawing function 
 function draw() {
+    // Start Space Coloniztion
     if (simulationStarted) {
-        // Set background colour
         background(242, 242, 242);
         spaceColonization();
         sprout();
     }
 }
 
-
-
 // Function to start simulation
 function growthSimulation() {
-    // Create a library to store scattered points
-    for( let x = 0; x <= windowWidth; x += 10) {
-        for (let y = 0; y <= windowHeight; y += 10) {
-            let growthPoint = createVector(x, y);
-            growthPoints.push(growthPoint);
-        }
-    }
+    // Scratter Space Colonization Growth Points
+    scatterGrowthPoints();
 
-    // Start at the center of the screen
-    const center = createVector(width /2, height / 2); 
-
-    // Define directions for intial branches
-    let rootBranches = [];
-
-    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(100));
-    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(100));
-    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(100));
-    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(100));
-
-    // Create initial branches based on directions
-    for (let branch of rootBranches) {
-        let branchEnd = p5.Vector.add(center, branch);
-        let newBranch = new Branch(center, branchEnd, 0);
-        branches.push(newBranch);
-    }
+    // Create root branches at the center of the screen
+    createRootBranches();
 }
 
 
@@ -104,14 +81,14 @@ class Branch {
         // Vector pointing from the branch tip to the point
         let dir = p5.Vector.sub(point, this.end);
 
-        // You might want to normalize the vector so that all branches grow at a consistent rate
+        // Normalize vectors so that all branches grow at a consistent rate
         dir.normalize();
 
         // Calculate the current branch's direction and length
         let currentBranchVector = p5.Vector.sub(this.end, this.start);
         let currentBranchLength = currentBranchVector.mag();
 
-        // Set the length of the new branch to be 0.75 of the original branch's length
+        // Randomize length of the new branch
         let newLength = currentBranchLength * random(0.55, 1.55);
 
         // Cap Maximum length
@@ -135,8 +112,6 @@ class Branch {
 
 // Function to find the closest growth point to a given position
 function findClosestPoint(position) {
-
-    // this function should return the closest growth point to the provided position
     let closest = null;
     let closestDist = Infinity;
 
@@ -147,7 +122,7 @@ function findClosestPoint(position) {
             closest = point;
         }
     }
-    return closest;  // may be null if no points are left
+    return closest;
 }
 
 // Function too initiate title screen
@@ -208,64 +183,88 @@ function spaceColonization() {
 }
 
 function sprout() {
-            // Draw all branches, whether finished or not
-            for (let branch of branches) {
+    // Draw all branches, whether finished or not
+    for (let branch of branches) {
                 branch.show();
             }
             
-            if (frameCount % 10 == 0) {
-                
-                // New branches stored here
-                let branchesThisFrame = [];
-    
-                for (let i = branches.length -1; i >=0; i--) {
-                    let branch = branches[i];
-                    if (!branch.finished) {  
-    
-                        // Random Space Colonization
-                        if (random(1.0) < 0.3 && branches[i].depth < 15) {
-    
-    
-                        // Find closest removed growth point
-                        let closestPoint = null;
-                        let record = -1; // Using -1 to signify no point found yet
-                        for (let j = 0; j < removedGrowthPoints.length; j++) {
-                            let point = removedGrowthPoints[j];
-                            let d = dist(point.x, point.y, branch.end.x, branch.end.y);
-                            if (record === -1 || d < record) {
-                                closestPoint = point;
-                                record = d;
-                            }
-                        }
-    
-                        // If a closest point was found among the removed points, grow towards it
-                        if (closestPoint) {
-                            let newBranch = branch.growTowards(closestPoint, this);
-                            branches.push(newBranch);
-                            branchesThisFrame.push(newBranch);
-                            // Optionally, you can remove the targeted point from removedGrowthPoints if it shouldn't be targeted again
-                            removedGrowthPoints = removedGrowthPoints.filter(point => point !== closestPoint);
-                        }
-    
-                        // Prevent further branching from this branch
-                        branches[i].finished = true;
+    if (frameCount % 10 == 0) {
+        for (let i = branches.length -1; i >=0; i--) {
+            let branch = branches[i];
+            
+            if (!branch.finished) {  
+                // Random Space Colonization
+                if (random(1.0) < 0.3 && branches[i].depth < 15) {
+                    // Find closest removed growth point
+                    let closestPoint = null;
+                    let record = -1; // Using -1 to signify no point found yet
+                    for (let j = 0; j < removedGrowthPoints.length; j++) {
+                        let point = removedGrowthPoints[j];
+                        let d = dist(point.x, point.y, branch.end.x, branch.end.y);
                         
-                        } else { // Branch prolifiration
-                            if (branches[i].depth < 15) {
-                                let branchA = branches[i].branch(PI / 4, this);
-                                let branchB = branches[i].branch(-PI / 4, this);
-    
-                                branches.push(branchA);
-                                branches.push(branchB);
-    
-                                // Instead of branches to evaluate, store in temp memory
-                                branchesThisFrame.push(branchA);
-                                branchesThisFrame.push(branchB);
-                            }
-                            // Prevent further branching from this branch
-                            branches[i].finished = true; 
-                        }   
+                        if (record === -1 || d < record) {
+                            closestPoint = point;
+                            record = d;
+                        }
                     }
-                }
+    
+                    // If a closest point was found among the removed points, grow towards it
+                    if (closestPoint) {
+                        let newBranch = branch.growTowards(closestPoint, this);
+                        branches.push(newBranch);
+                        removedGrowthPoints = removedGrowthPoints.filter(point => point !== closestPoint);
+                    }
+    
+                    // Prevent further branching from this branch
+                    branches[i].finished = true;
+                        
+                } else { 
+                     proliferate(i);
+                }   
             }
+        }
+    }
+}
+
+function proliferate(index) {
+    // Grow two branches from parent and store to memory
+    if (branches[index].depth < 15) {
+        let branchA = branches[index].branch(PI / 4, this);
+        let branchB = branches[index].branch(-PI / 4, this);
+
+        branches.push(branchA);
+        branches.push(branchB);
+    }
+
+    // Prevent further branching from parent
+    branches[index].finished = true; 
+}
+
+function scatterGrowthPoints() {
+    // Create a library to store scattered points
+    for( let x = 0; x <= windowWidth; x += 10) {
+        for (let y = 0; y <= windowHeight; y += 10) {
+            let growthPoint = createVector(x, y);
+            growthPoints.push(growthPoint);
+        }
+    }
+}
+
+function createRootBranches() {
+    const center = createVector(width /2, height / 2); 
+
+    // Define directions for intial branches
+    let rootBranches = [];
+
+    rootBranches.push(p5.Vector.fromAngle(PI/4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(-PI/4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(3* PI / 4).mult(100));
+    rootBranches.push(p5.Vector.fromAngle(-3* PI / 4).mult(100));
+
+    // Create initial branches based on directions
+    for (let branch of rootBranches) {
+        let branchEnd = p5.Vector.add(center, branch);
+        let newBranch = new Branch(center, branchEnd, 0);
+        branches.push(newBranch);
+    }
 }
