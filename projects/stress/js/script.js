@@ -38,9 +38,11 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     titleScreen();
 }
+
 /**
  * Description of draw()
 */
+
 function draw() {
     // Calculate the mouse velocity
     let mouseMovedDistance = dist(mouseX, mouseY, previousMouseX, previousMouseY);
@@ -88,6 +90,9 @@ function draw() {
         } 
         
         if (frameCount % 10 == 0) {
+
+
+            
             // New branches stored here
             let branchesThisFrame = [];
 
