@@ -3,6 +3,11 @@
  * Nadine Mohamed
  * 
  * Date : 19-10-2023
+ * This simulation visualizes the complexity and persistence of anxious 
+ * thoughts, with growth influenced by real-time brain signals during stress 
+ * responses. As you interact with your clicks, ponder the nature of your 
+ * influence on the unfolding patterns.`
+ * 
  */
 
 "use strict";
