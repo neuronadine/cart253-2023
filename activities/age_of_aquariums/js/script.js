@@ -1,12 +1,25 @@
 /**
- * Title of Project
- * Author Name
+ * Exchange Rate
+ * Nadine Mohamed
  * 
- * This is a template. You must fill in the title, author, 
- * and this description to match your project!
+ * 
  */
 
 "use strict";
+
+let angle = 0;
+let leftWaterLevel = 0;
+let rightWaterLevel = 0;
+let buttonRX, buttonLX, buttonY;
+
+// Size and position settings for the various elements
+const balanceLength = 500;
+const balanceHeight = 10;
+const tankWidth = 80;
+const tankHeight = 100;
+const buttonWidth = 50;
+const buttonHeight = 25;
+const edge = 40;
 
 /**
  * Description of preload
@@ -21,7 +34,6 @@ function preload() {
 */
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    background(0);
 }
 
 
@@ -29,15 +41,80 @@ function setup() {
  * Description of draw()
 */
 function draw() {
+    background(0);
 
-    // Draw the balance
+    // Update the angle based on water levels
+    angle = map(rightWaterLevel - leftWaterLevel, -100, 100, -PI / 4, PI / 4);
+
+    // New drawing
     push();
     translate(width / 2, height / 1.66);
-    rect(-500 / 2, -10 / 2, 500, 10);
+    rotate(angle);
+
+    // Draw ballance beam
+    rect(-balanceLength / 2, -balanceHeight / 2, balanceLength, balanceHeight);
+    
+    // Draw the fulcrum
+    fill(0, 118, 59);
+    translate(0, 5);
     triangle(-30, 40, 30, 40, 0, 0); 
+
+    let leftTankX = -balanceLength / 2 - tankWidth / 2 + tankWidth / 4 + edge;
+    let rightTankX = balanceLength / 2 - tankWidth / 2 - tankWidth / 4 - edge;
+    
+    // Water tanks
+    let tanksY = -(balanceHeight + tankHeight)
+    fill(255);
+    rect(leftTankX, tanksY, tankWidth, tankHeight);
+    rect(rightTankX, tanksY, tankWidth, tankHeight);
+
+    // Represent water in the tanks
+    const waterHeightLeft = map(leftWaterLevel, 0, 100, 0, tankHeight);
+    const waterHeightRight = map(rightWaterLevel, 0, 100, 0, tankHeight);
+
+    fill(255, 0, 0);
+    let waterLY = tanksY + (tankHeight - waterHeightLeft)
+    let waterRY = tanksY + (tankHeight - waterHeightRight)
+
+    rect(leftTankX, waterLY, tankWidth, waterHeightLeft);
+    rect(rightTankX, waterRY, tankWidth, waterHeightRight);
+
     pop();
 
-    // Water tanks
-    rect(120, (height / 2) - 28, 80, 100);
-    rect(width - 200, (height / 2) - 28, 80, 100);
+
+    // Draw buttons
+    buttonRX = 130;
+    buttonLX = width - 180;
+    buttonY = height / 2 + tankHeight + 10;
+
+    fill(100);
+    rect(buttonRX, buttonY, buttonWidth, buttonHeight);
+    rect(buttonLX, buttonY, buttonWidth, buttonHeight);
+
+    // Text in buttons
+    fill(255);
+    textAlign(CENTER, CENTER);
+
+    let textLX = 130 + buttonWidth / 2;
+    let textRX = width - 180 + buttonWidth / 2;
+    let textY = height / 2 + tankHeight + 10 + buttonHeight / 2;
+
+    text("Fill", textLX, textY);
+    text("Fill", textRX, textY);
+}
+
+function mousePressed() {
+    const inButtonL =
+        mouseX > buttonRX && mouseX < buttonRX + buttonWidth && 
+        mouseY > buttonY && mouseY < buttonY + buttonHeight;
+
+    const inButtonR =
+        mouseX > buttonLX && mouseX < buttonLX + buttonWidth && 
+        mouseY > buttonY && mouseY < buttonY + buttonHeight
+
+    if (inButtonL) {
+        leftWaterLevel = min(leftWaterLevel + 10, 100);
+    } else if (inButtonR) {
+        rightWaterLevel = min(rightWaterLevel + 10, 100);
+    }
 }
