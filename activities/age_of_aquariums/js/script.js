@@ -20,6 +20,7 @@ const tankHeight = 100;
 const buttonWidth = 50;
 const buttonHeight = 25;
 const edge = 40;
+const leftWeightFactor = 1.5;
 
 let water = [];
 
@@ -53,7 +54,15 @@ function draw() {
     background(0);
 
     // Update the angle based on water levels
-    angle = map(rightWaterLevel - leftWaterLevel, -100, 100, -PI / 4, PI / 4);
+    let effectiveLeftWaterLevel;
+    if (leftWaterLevel === 0 && rightWaterLevel === 0) {
+        effectiveLeftWaterLevel = leftWaterLevel;
+        angle = map(effectiveLeftWaterLevel - rightWaterLevel, -100, 100, -PI / 4, PI / 4);
+        
+    } else {
+        effectiveLeftWaterLevel = leftWaterLevel * leftWeightFactor;
+        angle = map(effectiveLeftWaterLevel - rightWaterLevel, -100 * leftWeightFactor, 100, -PI / 4, PI / 4);
+    }
 
     // New drawing
     push();
@@ -126,9 +135,9 @@ function mousePressed() {
         mouseY > buttonY && mouseY < buttonY + buttonHeight
 
     if (inButtonL) {
-        leftWaterLevel = min(leftWaterLevel + 10, 100);
+        leftWaterLevel = min(leftWaterLevel + 2, 100);
     } else if (inButtonR) {
-        rightWaterLevel = min(rightWaterLevel + 10, 100);
+        rightWaterLevel = min(rightWaterLevel + 2, 100);
     }
 }
 
