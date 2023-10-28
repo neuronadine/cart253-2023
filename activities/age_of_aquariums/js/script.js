@@ -84,9 +84,9 @@ function draw() {
     fill(255, 0, 0);
     noStroke();
     for (let i = 0; i < tankWidth; i++) {
-        let tilt = tan(angle) * i
-        let topLY = -waterHeightLeft + tilt
-        let topRY = -waterHeightRight + tilt
+        let tilt = tan(angle) * i;
+        let topLY = min(-waterHeightLeft + tilt, 0);
+        let topRY = min(-waterHeightRight + tilt, 0);
 
         rect(leftTankX + i, -balanceHeight, 1, topLY);
         rect(rightTankX + i, -balanceHeight, 1, topRY);
