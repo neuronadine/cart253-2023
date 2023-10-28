@@ -81,23 +81,16 @@ function draw() {
     const waterHeightLeft = map(leftWaterLevel, 0, 100, 0, tankHeight);
     const waterHeightRight = map(rightWaterLevel, 0, 100, 0, tankHeight);
 
-    // fill(255, 0, 0); // make water red
-    // let waterLY = tanksY + (tankHeight - waterHeightLeft)
-    // let waterRY = tanksY + (tankHeight - waterHeightRight)
-
     fill(255, 0, 0);
     noStroke();
     for (let i = 0; i < tankWidth; i++) {
         let tilt = tan(angle) * i
-        let topY = tanksY - tilt
+        let topLY = -waterHeightLeft + tilt
+        let topRY = -waterHeightRight + tilt
 
-        rect(leftTankX + i, topY, 1, tankHeight + tilt);
-        rect(rightTankX + i, topY, 1, tankHeight + tilt);
+        rect(leftTankX + i, -balanceHeight, 1, topLY);
+        rect(rightTankX + i, -balanceHeight, 1, topRY);
     }
-
-
-    // rect(leftTankX, tanksY, 1, waterHeightLeft);
-    // rect(rightTankX, waterRY, tankWidth, waterHeightRight);
 
     pop();
 
