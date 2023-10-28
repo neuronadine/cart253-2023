@@ -21,6 +21,9 @@ const buttonWidth = 50;
 const buttonHeight = 25;
 const edge = 40;
 
+let water = [];
+
+
 /**
  * Description of preload
 */
@@ -34,6 +37,12 @@ function preload() {
 */
 function setup() {
     createCanvas(windowWidth, windowHeight);
+
+    // for () {
+        
+    // }
+
+
 }
 
 
@@ -72,12 +81,20 @@ function draw() {
     const waterHeightLeft = map(leftWaterLevel, 0, 100, 0, tankHeight);
     const waterHeightRight = map(rightWaterLevel, 0, 100, 0, tankHeight);
 
-    fill(255, 0, 0);
-    let waterLY = tanksY + (tankHeight - waterHeightLeft)
-    let waterRY = tanksY + (tankHeight - waterHeightRight)
+    // fill(255, 0, 0); // make water red
+    // let waterLY = tanksY + (tankHeight - waterHeightLeft)
+    // let waterRY = tanksY + (tankHeight - waterHeightRight)
 
-    rect(leftTankX, waterLY, tankWidth, waterHeightLeft);
-    rect(rightTankX, waterRY, tankWidth, waterHeightRight);
+    fill(255, 0, 0);
+    noStroke();
+    for (let i = 0; i < tankWidth; i++) {
+        rect(leftTankX + i, tanksY, 1, tankHeight);
+        rect(rightTankX + i, tanksY, 1, tankHeight);
+    }
+
+
+    // rect(leftTankX, tanksY, 1, waterHeightLeft);
+    // rect(rightTankX, waterRY, tankWidth, waterHeightRight);
 
     pop();
 
@@ -118,3 +135,4 @@ function mousePressed() {
         rightWaterLevel = min(rightWaterLevel + 10, 100);
     }
 }
+
