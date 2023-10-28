@@ -88,8 +88,11 @@ function draw() {
     fill(255, 0, 0);
     noStroke();
     for (let i = 0; i < tankWidth; i++) {
-        rect(leftTankX + i, tanksY, 1, tankHeight);
-        rect(rightTankX + i, tanksY, 1, tankHeight);
+        let tilt = tan(angle) * i
+        let topY = tanksY - tilt
+
+        rect(leftTankX + i, topY, 1, tankHeight + tilt);
+        rect(rightTankX + i, topY, 1, tankHeight + tilt);
     }
 
 
