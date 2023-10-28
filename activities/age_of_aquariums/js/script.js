@@ -2,7 +2,8 @@
  * Exchange Rate
  * Nadine Mohamed
  * 
- * 
+ * In this program, the user interacts with the buttons. The goal
+ * is to fill to keep both tanks balanced.
  */
 
 "use strict";
@@ -61,7 +62,7 @@ function draw() {
         
     } else {
         effectiveLeftWaterLevel = leftWaterLevel * leftWeightFactor;
-        angle = map(effectiveLeftWaterLevel - rightWaterLevel, -100 * leftWeightFactor, 100, -PI / 4, PI / 4);
+        angle = map(effectiveLeftWaterLevel - rightWaterLevel, -100 * leftWeightFactor, 100, PI / 4, -PI / 4);
     }
 
     // New drawing
@@ -93,14 +94,13 @@ function draw() {
     fill(255, 0, 0);
     noStroke();
     for (let i = 0; i < tankWidth; i++) {
-        let tilt = tan(angle) * i;
+        let tilt = tan(angle) * (tankWidth - i);
         let topLY = min(-waterHeightLeft + tilt, 0);
         let topRY = min(-waterHeightRight + tilt, 0);
 
         rect(leftTankX + i, -balanceHeight, 1, topLY);
         rect(rightTankX + i, -balanceHeight, 1, topRY);
     }
-
     pop();
 
 
@@ -135,9 +135,9 @@ function mousePressed() {
         mouseY > buttonY && mouseY < buttonY + buttonHeight
 
     if (inButtonL) {
-        leftWaterLevel = min(leftWaterLevel + 2, 100);
+        leftWaterLevel = min(leftWaterLevel + 1, 100);
     } else if (inButtonR) {
-        rightWaterLevel = min(rightWaterLevel + 2, 100);
+        rightWaterLevel = min(rightWaterLevel + 1, 100);
     }
 }
 
