@@ -91,9 +91,16 @@ function draw() {
     const waterHeightLeft = map(leftWaterLevel, 0, 100, 0, tankHeight);
     const waterHeightRight = map(rightWaterLevel, 0, 100, 0, tankHeight);
 
+
     fill(255, 0, 0);
     noStroke();
     for (let i = 0; i < tankWidth; i++) {
+
+        if (leftWaterLevel === rightWaterLevel ) {
+            fill(0, 0, 255);
+            noStroke();
+        }
+        
         let tilt = tan(angle) * (tankWidth - i);
         let topLY = min(-waterHeightLeft + tilt, 0);
         let topRY = min(-waterHeightRight + tilt, 0);
@@ -140,4 +147,14 @@ function mousePressed() {
         rightWaterLevel = min(rightWaterLevel + 1, 100);
     }
 }
+
+/*
+* Here are the changes I want to implement (1) make the water turn
+* blue once a state of equilibrium is reached. If one of the tanks
+* become full before equilibrium is reached then the screan fills 
+* gradually with blood symbolizing and a restart button shows up. 
+* (2) change the button to a faucet. (3) introduce randomness to 
+* the weight of a button click after each click and store that in 
+* an array. Does this plan answer all requirements ?
+*/
 
