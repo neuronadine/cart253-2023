@@ -8,12 +8,16 @@
 
 "use strict";
 
+// Initialize global variables
 let angle = 0;
 let leftWaterLevel = 0;
 let rightWaterLevel = 0;
 let buttonRX, buttonLX, buttonY;
+let leftWeightFactor = 1.5;
+let rightWeightFactor = 1.5;
+let gameOver = false;
 
-// Size and position settings for the various elements
+// Initialize constant variables
 const balanceLength = 500;
 const balanceHeight = 10;
 const tankWidth = 80;
@@ -23,9 +27,6 @@ const buttonHeight = 25;
 const edge = 40;
 const balanceThreshold = 3;
 const angleThreshold = 0.01;
-
-let leftWeightFactor = 1.5;
-let rightWeightFactor = 1.5;
 
 let water = [];
 let leftWeights = [];
@@ -45,12 +46,6 @@ function preload() {
 */
 function setup() {
     createCanvas(windowWidth, windowHeight);
-
-    // for () {
-        
-    // }
-
-
 }
 
 
@@ -59,6 +54,17 @@ function setup() {
 */
 function draw() {
     background(0);
+
+    // Turn screen red if GameOver
+    if (gameOver) {
+        background(255, 0, 0);
+        fill(255);
+        rect(width / 2 - 75, height / 2 - 15, 150, 30);
+        fill(0);
+        textAlign(CENTER, CENTER);
+        text("Restart", width / 2, height / 2);
+        return;
+    }
 
     // Update the angle based on water levels
     let effectiveLeftWaterLevel;
@@ -71,7 +77,6 @@ function draw() {
         effectiveLeftWaterLevel = leftWaterLevel * leftWeightFactor;
         effectiveRightWaterLevel = rightWaterLevel * rightWeightFactor;
         angle = map(effectiveLeftWaterLevel - effectiveRightWaterLevel, -100 * leftWeightFactor, 100 * rightWeightFactor, PI / 4, -PI / 4);
-        // angle = map(leftWaterLevel - rightWaterLevel, -100, 100, PI / 4, -PI / 4);
     }
 
     // New drawing
@@ -144,6 +149,14 @@ function draw() {
 
     text("Fill", textLX, textY);
     text("Fill", textRX, textY);
+
+    let maxTiltLeft = tan(angle) * tankWidth;
+    let maxTiltRight = -tan(angle) * tankWidth;
+
+    if (waterHeightLeft + maxTiltLeft >= tankHeight || waterHeightRight + maxTiltRight >= tankHeight) {
+        gameOver = true;
+        return;
+    }
 }
 
 function mousePressed() {
