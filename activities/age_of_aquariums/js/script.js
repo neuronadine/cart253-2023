@@ -21,9 +21,15 @@ const tankHeight = 100;
 const buttonWidth = 50;
 const buttonHeight = 25;
 const edge = 40;
-const leftWeightFactor = 1.5;
+const balanceThreshold = 3;
+const angleThreshold = 0.01;
+
+let leftWeightFactor = 1.5;
+let rightWeightFactor = 1.5;
 
 let water = [];
+let leftWeights = [];
+let rightWeights = [];
 
 
 /**
@@ -56,13 +62,16 @@ function draw() {
 
     // Update the angle based on water levels
     let effectiveLeftWaterLevel;
+    let effectiveRightWaterLevel;
     if (leftWaterLevel === 0 && rightWaterLevel === 0) {
         effectiveLeftWaterLevel = leftWaterLevel;
         angle = map(effectiveLeftWaterLevel - rightWaterLevel, -100, 100, -PI / 4, PI / 4);
         
     } else {
         effectiveLeftWaterLevel = leftWaterLevel * leftWeightFactor;
-        angle = map(effectiveLeftWaterLevel - rightWaterLevel, -100 * leftWeightFactor, 100, PI / 4, -PI / 4);
+        effectiveRightWaterLevel = rightWaterLevel * rightWeightFactor;
+        angle = map(effectiveLeftWaterLevel - effectiveRightWaterLevel, -100 * leftWeightFactor, 100 * rightWeightFactor, PI / 4, -PI / 4);
+        // angle = map(leftWaterLevel - rightWaterLevel, -100, 100, PI / 4, -PI / 4);
     }
 
     // New drawing
@@ -96,11 +105,16 @@ function draw() {
     noStroke();
     for (let i = 0; i < tankWidth; i++) {
 
-        if (leftWaterLevel === rightWaterLevel ) {
+        if ( abs(leftWaterLevel - rightWaterLevel) <= balanceThreshold && abs(angle) <= angleThreshold) {
+            fill(0, 255, 0);
+            noStroke();
+        }
+
+        if (leftWaterLevel === rightWaterLevel) {
             fill(0, 0, 255);
             noStroke();
         }
-        
+
         let tilt = tan(angle) * (tankWidth - i);
         let topLY = min(-waterHeightLeft + tilt, 0);
         let topRY = min(-waterHeightRight + tilt, 0);
@@ -142,8 +156,11 @@ function mousePressed() {
         mouseY > buttonY && mouseY < buttonY + buttonHeight
 
     if (inButtonL) {
+        leftWeightFactor = random(1.0, 1.5);
         leftWaterLevel = min(leftWaterLevel + 1, 100);
+
     } else if (inButtonR) {
+        rightWeightFactor = random(1.0, 1.5);
         rightWaterLevel = min(rightWaterLevel + 1, 100);
     }
 }
