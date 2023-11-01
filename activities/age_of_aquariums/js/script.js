@@ -36,35 +36,22 @@ let leftWeights = [];
 let rightWeights = [];
 
 
-/**
- * Description of preload
-*/
-function preload() {
 
-}
-
-
-/**
- * Description of setup
-*/
+// Initialize canvas
 function setup() {
     createCanvas(windowWidth, windowHeight);
 }
 
 
-/**
- * Description of draw()
-*/
+// Main Drawing function
 function draw() {
 
     background(0);
 
-    // Set text properties
-    textSize(38);  // Set font size
-    fill(255);  // White text
-    textAlign(CENTER, CENTER);  // Centered text
-
     // Draw the title
+    textSize(38);
+    fill(255);
+    textAlign(CENTER, CENTER);
     text("Bleach", width / 2, 50);
 
     // Turn screen red if GameOver
@@ -217,14 +204,3 @@ function mousePressed() {
         rightWaterLevel = min(rightWaterLevel + 10, 100);
     }
 }
-
-/*
-* Here are the changes I want to implement (1) make the water turn
-* blue once a state of equilibrium is reached. If one of the tanks
-* become full before equilibrium is reached then the screan fills 
-* gradually with blood symbolizing and a restart button shows up. 
-* (2) change the button to a faucet. (3) introduce randomness to 
-* the weight of a button click after each click and store that in 
-* an array. Does this plan answer all requirements ?
-*/
-
