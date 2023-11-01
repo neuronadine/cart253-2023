@@ -2,8 +2,10 @@
  * Exchange Rate
  * Nadine Mohamed
  * 
- * In this program, the user interacts with the buttons. The goal
- * is to fill to keep both tanks balanced.
+ * In this program, the user's objective is to keep two water tanks balanced. 
+ * The tanks can be filled with water, each having a different weight factor 
+ * that affects the overall balance. If the water level of either tank exceeds 
+ * its capacity or the balance angle becomes too large, the game ends. 
  */
 
 "use strict";
@@ -53,7 +55,16 @@ function setup() {
  * Description of draw()
 */
 function draw() {
+
     background(0);
+
+    // Set text properties
+    textSize(38);  // Set font size
+    fill(255);  // White text
+    textAlign(CENTER, CENTER);  // Centered text
+
+    // Draw the title
+    text("Bleach", width / 2, 50);
 
     // Turn screen red if GameOver
     if (gameOver) {
@@ -108,6 +119,10 @@ function draw() {
 
     fill(255, 0, 0);
     noStroke();
+
+    let waterHeightsL = [];
+    let waterHeightsR = [];
+
     for (let i = 0; i < tankWidth; i++) {
 
         if ( abs(leftWaterLevel - rightWaterLevel) <= balanceThreshold && abs(angle) <= angleThreshold) {
@@ -123,6 +138,8 @@ function draw() {
         let tilt = tan(angle) * (tankWidth - i);
         let topLY = min(-waterHeightLeft + tilt, 0);
         let topRY = min(-waterHeightRight + tilt, 0);
+        waterHeightsL.push(topLY);
+        waterHeightsR.push(topRY);
 
         rect(leftTankX + i, -balanceHeight, 1, topLY);
         rect(rightTankX + i, -balanceHeight, 1, topRY);
@@ -141,6 +158,7 @@ function draw() {
 
     // Text in buttons
     fill(255);
+    textSize(12);
     textAlign(CENTER, CENTER);
 
     let textLX = 130 + buttonWidth / 2;
@@ -150,10 +168,12 @@ function draw() {
     text("Fill", textLX, textY);
     text("Fill", textRX, textY);
 
-    let maxTiltLeft = tan(angle) * tankWidth;
-    let maxTiltRight = -tan(angle) * tankWidth;
+    let maxWaterHeightL = Math.max(...waterHeightsL);
+    let maxWaterHeightR = Math.max(...waterHeightsR);
+    let topLeftY = tanksY + tan(angle) * tankWidth;
+    let topRightY = tanksY - tan(angle) * tankWidth;
 
-    if (waterHeightLeft + maxTiltLeft >= tankHeight || waterHeightRight + maxTiltRight >= tankHeight) {
+    if (maxWaterHeightL - balanceHeight <= topLeftY || maxWaterHeightR - balanceHeight <= topRightY) {
         gameOver = true;
         return;
     }
@@ -168,14 +188,14 @@ function mousePressed() {
             // Reset the game variables
             leftWaterLevel = 0;
             rightWaterLevel = 0;
-            leftWeightFactor = 0;
-            rightWeightFactor = 0;
+            leftWeightFactor = 1.5;
+            rightWeightFactor = 1.5;
             gameOver = false;
             angle = 0;
             return; // Exit so that no further actions are taken this click
         }
     }
-    
+
     const inButtonL =
         mouseX > buttonRX && mouseX < buttonRX + buttonWidth && 
         mouseY > buttonY && mouseY < buttonY + buttonHeight;
@@ -186,11 +206,11 @@ function mousePressed() {
 
     if (inButtonL) {
         leftWeightFactor = random(1.0, 1.5);
-        leftWaterLevel = min(leftWaterLevel + 1, 100);
+        leftWaterLevel = min(leftWaterLevel + 10, 100);
 
     } else if (inButtonR) {
         rightWeightFactor = random(1.0, 1.5);
-        rightWaterLevel = min(rightWaterLevel + 1, 100);
+        rightWaterLevel = min(rightWaterLevel + 10, 100);
     }
 }
 
