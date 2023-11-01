@@ -160,6 +160,22 @@ function draw() {
 }
 
 function mousePressed() {
+
+    if (gameOver) {
+        // Check if mouse is within the "Restart" button bounds
+        if (mouseX > (width / 2 - 75) && mouseX < (width / 2 + 75) &&
+            mouseY > (height / 2 - 15) && mouseY < (height / 2 + 15)) {
+            // Reset the game variables
+            leftWaterLevel = 0;
+            rightWaterLevel = 0;
+            leftWeightFactor = 0;
+            rightWeightFactor = 0;
+            gameOver = false;
+            angle = 0;
+            return; // Exit so that no further actions are taken this click
+        }
+    }
+    
     const inButtonL =
         mouseX > buttonRX && mouseX < buttonRX + buttonWidth && 
         mouseY > buttonY && mouseY < buttonY + buttonHeight;
