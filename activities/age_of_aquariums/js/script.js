@@ -117,9 +117,6 @@ function draw() {
     const waterHeightRight = map(rightWaterLevel, 0, 100, 0, tankHeight);
 
 
-    fill(255, 0, 0);
-    noStroke();
-
     let waterHeightsL = [];
     let waterHeightsR = [];
 
@@ -131,7 +128,7 @@ function draw() {
         }
 
         if (leftWaterLevel === rightWaterLevel) {
-            fill(0, 0, 255);
+            fill(255, 0, 0);
             noStroke();
         }
 
@@ -141,7 +138,12 @@ function draw() {
         waterHeightsL.push(topLY);
         waterHeightsR.push(topRY);
 
+        fill(0, 0, 255);
+        noStroke();
         rect(leftTankX + i, -balanceHeight, 1, topLY);
+
+        fill(255, 0, 0);
+        noStroke();
         rect(rightTankX + i, -balanceHeight, 1, topRY);
     }
     pop();
