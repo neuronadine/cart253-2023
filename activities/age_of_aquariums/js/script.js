@@ -73,6 +73,7 @@ function draw() {
         rect(width / 2 - 75, height / 2 - 15, 150, 30);
         fill(0);
         textAlign(CENTER, CENTER);
+        textSize(20); 
         text("Restart", width / 2, height / 2);
         return;
     }
@@ -138,7 +139,7 @@ function draw() {
         waterHeightsL.push(topLY);
         waterHeightsR.push(topRY);
 
-        fill(0, 0, 255);
+        fill(0, 53, 185);
         noStroke();
         rect(leftTankX + i, -balanceHeight, 1, topLY);
 
