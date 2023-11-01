@@ -1,11 +1,12 @@
 /**
- * Exchange Rate
- * Nadine Mohamed
+ * Bleach
+ * Author : Nadine Mohamed
+ * Date : 26/10/2023
  * 
  * In this program, the user's objective is to keep two water tanks balanced. 
  * The tanks can be filled with water, each having a different weight factor 
  * that affects the overall balance. If the water level of either tank exceeds 
- * its capacity or the balance angle becomes too large, the game ends. 
+ * its capacity, the game ends. 
  */
 
 "use strict";
@@ -195,7 +196,7 @@ function mousePressed() {
             rightWeightFactor = 1.5;
             gameOver = false;
             angle = 0;
-            return; // Exit so that no further actions are taken this click
+            return;
         }
     }
 
