@@ -8,25 +8,22 @@
 
 "use strict";
 
-/**
- * Description of preload
-*/
+let paddle;
+
 function preload() {
 
 }
 
-
-/**
- * Description of setup
-*/
 function setup() {
 
+    createCanvas(windowWidth, windowHeight);
+    paddle = new Paddle(300, 20);
 }
 
 
-/**
- * Description of draw()
-*/
 function draw() {
-
+    background(0);
+    
+    paddle.move();
+    paddle.display();
 }
