@@ -12,7 +12,7 @@ class Paddle {
         this.y = mouseY;
     }
 
-    display(){
+    display() {
         push();
         fill(255);
         noStroke();
@@ -20,4 +20,5 @@ class Paddle {
         rect(this.x, this.y, this.width, this.height);
         pop();
     }
+
 }

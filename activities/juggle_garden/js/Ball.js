@@ -92,6 +92,9 @@ class Ball {
         }
     }
 
+    
+
+
     display() {
         push();
         fill(255, 50, 50);
