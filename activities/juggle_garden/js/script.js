@@ -113,7 +113,7 @@ function draw() {
     }
     
     if (gameState == "win") {
-        background(0, 255, 0); // green background
+        background(0, 255, 0);
         fill(255);
         textSize(32);
         text("Click to Restart", windowWidth / 2 - 100, windowHeight / 2);
@@ -129,6 +129,7 @@ function mousePressed() {
     }
 
     if (gameState == "win" || gameState == "gameover") {
+        
         // Reset everything
         gameState = "playing";
         balls = [];

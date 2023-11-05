@@ -92,7 +92,7 @@ class Ball {
         }
     }
 
-    
+
 
 
     display() {
@@ -103,7 +103,3 @@ class Ball {
         pop();
     }
 }
-
-// this.x == 0 
-//             this.x == windowWidth ||
-//             this.y + this.size/2 == 0 ||
