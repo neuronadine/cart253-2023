@@ -11,7 +11,7 @@ let gravityForce = 0.002;
 let paddle;
 let balls = [];
 let flowers = [];
-let numFlowers = 3;
+let numFlowers = 5;
 let numBalls = 2;
 let gameState = "playing";
 let clicks = 0;
@@ -73,7 +73,7 @@ function draw() {
                     let newFlower = new Flower(newX, newY);
                     flowers.push(newFlower);
 
-                    
+
                     flowers.splice(j, 1);
                     continue;
                 }
@@ -112,7 +112,7 @@ function draw() {
 
 function mousePressed() {
 
-    if (gameState == "win") {
+    if (gameState == "win" || gameState == "gameover") {
         // Reset everything
         gameState = "playing";
         balls = [];
