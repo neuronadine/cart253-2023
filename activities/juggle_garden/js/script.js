@@ -2,8 +2,7 @@
  * Focus
  * Nadine Mohamed
  * 
- * This is a template. You must fill in the title, author, 
- * and this description to match your project!
+ * Sometimes in our eagerness to grow, we overlook the essence of balance.
  */
 
 "use strict";
@@ -13,7 +12,7 @@ let balls = [];
 let flowers = [];
 let numFlowers = 5;
 let numBalls = 2;
-let gameState = "playing";
+let gameState = "landing";
 let clicks = 0;
 
 
@@ -43,6 +42,18 @@ function setup() {
 
 function draw() {
     background(0);
+
+    if (gameState === "landing") {
+        fill(255);
+        textSize(32);
+        textAlign(CENTER, CENTER);
+        text("Keep the flowers alive!", windowWidth / 2, windowHeight / 2 - 100);
+        text("When 5 flowers bloom, you win.", windowWidth / 2, windowHeight / 2 - 60);
+        text("If all spouts die before 5 bloom, it's game over.", windowWidth / 2, windowHeight / 2 - 20);
+        text("Maximum of two clicks to plant seeds.", windowWidth / 2, windowHeight / 2 + 20);
+        text("Click to Start", windowWidth / 2, windowHeight / 2 + 80);
+        return;
+    }
     
     paddle.move();
     paddle.display();
@@ -112,6 +123,11 @@ function draw() {
 
 function mousePressed() {
 
+    if (gameState === "landing") {
+        gameState = "playing";
+        return;
+    }
+
     if (gameState == "win" || gameState == "gameover") {
         // Reset everything
         gameState = "playing";
@@ -138,10 +154,3 @@ function mousePressed() {
         clicks++;
     }
 }
-
-
-// Limit the number of balls that can spawn
-// Add the two endings : well the first ending is achieving the minmum number of flowers to grow
-// 
-// 
-// cosmetics

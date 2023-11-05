@@ -8,7 +8,7 @@ class Flower {
         this.maxSize = 40;
         this.color = color(100, 200, 100);
         this.bloomColor = color(255, 100, 100);
-        this.lifetime = 500; //5 seconds
+        this.lifetime = 5000; //5 seconds
         this.timeSinceLastNourished = 0;
         this.witherTimer = 0;
     }
