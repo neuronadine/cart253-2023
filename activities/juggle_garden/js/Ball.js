@@ -2,7 +2,7 @@ class Ball {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.vx = 0;
+        this.vx = 2;
         this.vy = 0;
         this.ax = 0;
         this.ay = 0;
@@ -24,35 +24,70 @@ class Ball {
 
         this.x = this.x + this.vx;
         this.y = this.y + this.vy;
-
-        // if (this.y - this.size/2 > height) {
-        //     this.active = false;
-        // }
     }
 
     bounce(paddle) {
+        let collided = false;
+        let normal;
+
         if (this.x > paddle.x - paddle.width/2 && 
             this.x < paddle.x + paddle.width/2 &&
             this.y + this.size/2 > paddle.y - paddle.height/2 &&
             this.y - this.size/2 < paddle.y + paddle.height/2) {
 
-            // Bounce
-            let dx = this.x - paddle.x;
-            this.vx = this.vx + map(dx, -paddle.width/2, paddle.width/2, -2, -2);
-            this.vy = -this.vy;
+            // Top side
+            if (this.vy > 0 && this.y - this.size/2 < paddle.y) {
+                normal = [0, -1];
+                collided = true;
+            } 
+            
+            // Bottom side
+            else if (this.vy < 0 && this.y + this.size/2 > paddle.y) {
+                normal = [0, 1];
+                collided = true;
+            }
+
+            // Left side
+            if (this.vx > 0 && this.x - this.size/2 < paddle.x) {
+                normal = [-1, 0];
+                collided = true;
+            } 
+            
+            // Right side
+            else if (this.vx < 0 && this.x + this.size/2 > paddle.x) {
+                normal = [1, 0];
+                collided = true;
+            }
+
+            if (collided) {
+                let dotProduct = this.vx * normal[0] + this.vy * normal[1];
+                this.vx -= 2 * dotProduct * normal[0];
+                this.vy -= 2 * dotProduct * normal[1];
+                this.ay = 0;
+                this.ax = 0;
+            }
+        }
+
+        // Bounce off exterior walls
+        // Bottom or Top wall
+        if (this.y - this.size/2 >= height ||
+            this.y + this.size/2 <= 0 ) {
+
+            let normal = [0, 1];
+            let dotProduct = this.vx * normal[0] + this.vy * normal[1];
+            this.vx -= 2 * dotProduct * normal[0];
+            this.vy -= 2 * dotProduct * normal[1];
             this.ay = 0;
         }
 
-        // Bounce if hit exterior walls
-        if (this.y - this.size/2 >= height ||
-            this.y + this.size/2 <= 0 ||
-            this.x - this.size/2 <= 0 ||
+        // Left or Right wall
+        if (this.x - this.size/2 <= 0 ||
             this.x + this.size/2 >= width) {
 
-            // Bounce
-            this.vy = -this.vy;
-            this.vx = -this.vx;
-            this.ay = 0;
+            let normal = [1, 0];
+            let dotProduct = this.vx * normal[0] + this.vy * normal[1];
+            this.vx -= 2 * dotProduct * normal[0];
+            this.vy -= 2 * dotProduct * normal[1];
             this.ax = 0;
         }
     }
