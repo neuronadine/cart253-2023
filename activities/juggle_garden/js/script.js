@@ -58,11 +58,17 @@ function draw() {
                 let flower = flowers[j];
         
                 flower.checkCollision(ball);
+                flower.update();
                 flower.display();
 
                 if (flower.hasBloomed()) {
                     let newBall = new Ball(flower.x, flower.y);
                     balls.push(newBall);
+                    flowers.splice(j, 1);
+                    continue;
+                }
+
+                if (flower.hasWithered()) {
                     flowers.splice(j, 1);
                 }
             }
