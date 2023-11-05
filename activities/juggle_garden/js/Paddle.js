@@ -9,6 +9,7 @@ class Paddle {
 
     move() {
         this.x = mouseX;
+        this.y = mouseY;
     }
 
     display(){

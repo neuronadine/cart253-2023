@@ -19,7 +19,7 @@ function preload() {
 function setup() {
 
     createCanvas(windowWidth, windowHeight);
-    paddle = new Paddle(300, 20);
+    paddle = new Paddle(100, 100);
 
     for (let i = 0; i < numBalls; i++) {
         let x = random(0, width);
