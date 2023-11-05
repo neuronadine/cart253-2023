@@ -22,8 +22,8 @@ function setup() {
     paddle = new Paddle(100, 100);
 
     for (let i = 0; i < numBalls; i++) {
-        let x = random(0, width);
-        let y = random(-400, -100);
+        let x = random(1, width);
+        let y = random(1, height/2);
         let ball = new Ball(x, y);
         balls.push(ball);
     }

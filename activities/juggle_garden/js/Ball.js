@@ -25,9 +25,9 @@ class Ball {
         this.x = this.x + this.vx;
         this.y = this.y + this.vy;
 
-        if (this.y - this.size/2 > height) {
-            this.active = false;
-        }
+        // if (this.y - this.size/2 > height) {
+        //     this.active = false;
+        // }
     }
 
     bounce(paddle) {
@@ -42,6 +42,19 @@ class Ball {
             this.vy = -this.vy;
             this.ay = 0;
         }
+
+        // Bounce if hit exterior walls
+        if (this.y - this.size/2 >= height ||
+            this.y + this.size/2 <= 0 ||
+            this.x - this.size/2 <= 0 ||
+            this.x + this.size/2 >= width) {
+
+            // Bounce
+            this.vy = -this.vy;
+            this.vx = -this.vx;
+            this.ay = 0;
+            this.ax = 0;
+        }
     }
 
     display() {
@@ -52,3 +65,7 @@ class Ball {
         pop();
     }
 }
+
+// this.x == 0 
+//             this.x == windowWidth ||
+//             this.y + this.size/2 == 0 ||
