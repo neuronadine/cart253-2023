@@ -14,8 +14,10 @@ let flowers = [];
 let numFlowers = 3;
 let numBalls = 2;
 let gameState = "playing";
-function preload() {
+let clicks = 0;
 
+
+function preload() {
 }
 
 function setup() {
@@ -107,6 +109,7 @@ function mousePressed() {
         gameState = "playing";
         balls = [];
         flowers = [];
+        clicks = [];
 
         for (let i = 0; i < numBalls; i++) {
             let x = random(1, width);
@@ -121,9 +124,10 @@ function mousePressed() {
             let flower = new Flower(x, y);
             flowers.push(flower);
         }
-    } else {
+    } else if (clicks < 4) {
         let newFlower = new Flower(mouseX, mouseY);
         flowers.push(newFlower);
+        clicks++;
     }
 }
 
