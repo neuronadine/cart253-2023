@@ -66,8 +66,16 @@ function draw() {
                 if (flower.hasBloomed()) {
                     let newBall = new Ball(flower.x, flower.y);
                     balls.push(newBall);
+
+                    // Create new flower
+                    let newX = random(0, width);
+                    let newY = random(0, height);
+                    let newFlower = new Flower(newX, newY);
+                    flowers.push(newFlower);
+
+                    
                     flowers.splice(j, 1);
-                    // continue;
+                    continue;
                 }
 
                 if (flower.hasWithered()) {
