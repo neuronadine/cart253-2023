@@ -11,9 +11,9 @@ let gravityForce = 0.002;
 let paddle;
 let balls = [];
 let flowers = [];
-let numFlowers = 5;
-let numBalls = 3;
-
+let numFlowers = 3;
+let numBalls = 2;
+let gameState = "playing";
 function preload() {
 
 }
@@ -74,11 +74,57 @@ function draw() {
             }
         }
     }
+
+    if (flowers.length == 0 && balls.length < 5) {
+        gameState = "gameover";
+    }
+    
+    if (balls.length >= 5) {
+        gameState = "win";
+    }
+    
+    if (gameState == "gameover") {
+        background(255, 0, 0);
+        fill(255);
+        textSize(32);
+        text("Game Over", windowWidth / 2 - 100, windowHeight / 2);
+        return;
+    }
+    
+    if (gameState == "win") {
+        background(0, 255, 0); // green background
+        fill(255);
+        textSize(32);
+        text("Click to Restart", windowWidth / 2 - 100, windowHeight / 2);
+        return;
+    }
 }
 
 function mousePressed() {
-    let newFlower = new Flower(mouseX, mouseY);
-    flowers.push(newFlower);
+
+    if (gameState == "win") {
+        // Reset everything
+        gameState = "playing";
+        balls = [];
+        flowers = [];
+
+        for (let i = 0; i < numBalls; i++) {
+            let x = random(1, width);
+            let y = random(1, height/2);
+            let ball = new Ball(x, y);
+            balls.push(ball);
+        }
+
+        for (let i = 0; i < numFlowers; i++) {
+            let x = random(0, width);
+            let y = random(0, height);
+            let flower = new Flower(x, y);
+            flowers.push(flower);
+        }
+    } else {
+        let newFlower = new Flower(mouseX, mouseY);
+        flowers.push(newFlower);
+    }
 }
 
 
