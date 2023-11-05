@@ -30,4 +30,11 @@ class Flower {
             this.nourish();
         }
     }
+
+    hasBloomed() {
+        if (this.size >= this.maxSize) {
+            return true;
+        }
+        return false;
+    }
 }

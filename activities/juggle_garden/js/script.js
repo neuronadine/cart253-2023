@@ -54,12 +54,28 @@ function draw() {
             ball.bounce(paddle);
             ball.display();
 
-            for (let j = 0; j < flowers.length; j++) {
+            for (let j = flowers.length - 1; j >= 0; j--) {
                 let flower = flowers[j];
         
                 flower.checkCollision(ball);
                 flower.display();
+
+                if (flower.hasBloomed()) {
+                    let newBall = new Ball(flower.x, flower.y);
+                    balls.push(newBall);
+                    flowers.splice(j, 1);
+                }
             }
         }
     }
 }
+
+function mousePressed() {
+    let newFlower = new Flower(mouseX, mouseY);
+    flowers.push(newFlower);
+}
+
+
+// Limit the number of balls that can spawn
+// Add the two endings 
+// cosmetics
