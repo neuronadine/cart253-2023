@@ -25,7 +25,7 @@ class Flower {
     }
 
     checkCollision(ball) {
-        let distance = dis(this.x, this.y, ball.x, ball.y);
+        let distance = dist(this.x, this.y, ball.x, ball.y);
         if (distance < (this.size / 2) + (ball.size / 2)) {
             this.nourish();
         }

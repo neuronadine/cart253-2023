@@ -10,6 +10,8 @@
 let gravityForce = 0.002;
 let paddle;
 let balls = [];
+let flowers = [];
+let numFlowers = 5;
 let numBalls = 3;
 
 function preload() {
@@ -27,6 +29,13 @@ function setup() {
         let ball = new Ball(x, y);
         balls.push(ball);
     }
+
+    for (let i = 0; i < numFlowers; i++) {
+        let x = random(0, width);
+        let y = random(0, height);
+        let flower = new Flower(x, y);
+        flowers.push(flower);
+    }
 }
 
 
@@ -36,7 +45,7 @@ function draw() {
     paddle.move();
     paddle.display();
 
-    for ( let i = 0; i < balls.length; i++) {
+    for (let i = 0; i < balls.length; i++) {
         let ball = balls[i];
 
         if (ball.active) {
@@ -44,7 +53,13 @@ function draw() {
             ball.move();
             ball.bounce(paddle);
             ball.display();
-        }
+
+            for (let j = 0; j < flowers.length; j++) {
+                let flower = flowers[j];
         
+                flower.checkCollision(ball);
+                flower.display();
+            }
+        }
     }
 }
