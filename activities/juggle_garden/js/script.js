@@ -1,6 +1,6 @@
 /**
- * Title of Project
- * Author Name
+ * Focus
+ * Nadine Mohamed
  * 
  * This is a template. You must fill in the title, author, 
  * and this description to match your project!
@@ -65,7 +65,7 @@ function draw() {
                     let newBall = new Ball(flower.x, flower.y);
                     balls.push(newBall);
                     flowers.splice(j, 1);
-                    continue;
+                    // continue;
                 }
 
                 if (flower.hasWithered()) {

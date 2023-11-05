@@ -8,7 +8,7 @@ class Flower {
         this.maxSize = 40;
         this.color = color(100, 200, 100);
         this.bloomColor = color(255, 100, 100);
-        this.lifetime = 50000; //5 seconds
+        this.lifetime = 500; //5 seconds
         this.timeSinceLastNourished = 0;
         this.witherTimer = 0;
     }
@@ -37,7 +37,7 @@ class Flower {
         if (this.timeSinceLastNourished > this.lifetime) {
             while(this.witherTimer >= 1000) {
                 this.size -= 1;
-                this.witherTimer -= 1000;
+                this.witherTimer -= 1500;
             }
             if (this.size <= 1) {
                 this.isBloomed = false;
