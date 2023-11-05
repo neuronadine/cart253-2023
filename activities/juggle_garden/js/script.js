@@ -77,5 +77,7 @@ function mousePressed() {
 
 
 // Limit the number of balls that can spawn
-// Add the two endings 
+// Add the two endings : well the first ending is achieving the minmum number of flowers to grow
+// 
+// 
 // cosmetics

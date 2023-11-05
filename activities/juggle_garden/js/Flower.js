@@ -8,6 +8,9 @@ class Flower {
         this.maxSize = 50;
         this.color = color(100, 200, 100);
         this.bloomColor = color(255, 100, 100);
+        this.lifetime = 5000; //5 seconds
+        this.timeSinceLastNourished = 0;
+        this.witherRate = 0.5;
     }
     display() {
         push();
@@ -22,6 +25,20 @@ class Flower {
             this.size = this.maxSize;
             this.isBloomed = true;
         }
+        this.timeSinceLastNourished = 0;
+    }
+
+    update() {
+        this.timeSinceLastNourished += deltaTime;
+
+        // Start withering
+        if (this.isBloomed && this.timeSinceLastNourished > this.lifetime) {
+            this.size -= this.witherRate;
+            if (this.size < 10) {
+                this.size = 10;
+                this.isBloomed = false;
+            }
+        }
     }
 
     checkCollision(ball) {
@@ -32,9 +49,10 @@ class Flower {
     }
 
     hasBloomed() {
-        if (this.size >= this.maxSize) {
-            return true;
+        return this.size >= this.maxSize;
         }
-        return false;
+
+    hasWithered() {
+        return !this.isBloomed && this.size <= 10;
     }
 }
