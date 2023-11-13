@@ -52,12 +52,12 @@ class Note {
             note.y += note.dy;
 
             // Check if note goes beyond the end point
-            if ((this.dx > 0 && note.x > this.endX + this.space) || (this.dx < 0 && note.x < this.startX - this.space) ||
-                (this.dy > 0 && note.y > this.endY + this.space) || (this.dy < 0 && note.y < this.startY - this.space)) {
-                
-                    // Reset the note to start minus one dash length and space
-                note.x = this.startX - this.dashLength * this.dx - this.space * this.dx;
-                note.y = this.startY - this.dashLength * this.dy - this.space * this.dy;
+            if (this.isOffScreen(note)) {
+                note.x = this.startX;
+                note.y = this.startY;
+                note.dx = Math.cos(this.globalAngle * Math.PI / 180);
+                note.dy = Math.sin(this.globalAngle * Math.PI / 180);
+                note.angle = this.globalAngle;
             }
         }
     }
@@ -73,5 +73,9 @@ class Note {
                 note.angle = reflectedAngle;
             }
         }
+    }
+
+    isOffScreen(note) {
+        return note.x < 0 || note.x > windowWidth || note.y < 0 || note.y > windowHeight;
     }
 }
