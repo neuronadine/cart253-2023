@@ -11,10 +11,6 @@ class Note {
         this.notes = [];
 
         this.initialize();
-
-        // Calculate x and y increments based on angle
-        // this.dx = Math.cos(this.angle * Math.PI / 180);
-        // this.dy = Math.sin(this.angle * Math.PI / 180);
     }
 
     // Initialize an array of notes
