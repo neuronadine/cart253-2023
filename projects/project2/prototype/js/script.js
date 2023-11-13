@@ -9,13 +9,6 @@
 
 "use strict";
 let note;
-let startX = 50;
-let startY = 0;
-let endX = 0;
-let angle = 0;
-let stroke = 5;
-let dashLength = 20;
-let space = 10;
 
 /**
  * Description of preload
@@ -28,7 +21,7 @@ function preload() {
 // Initialize the canvas and note object
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    note = new Note(startX, startY, endX, windowHeight, angle, stroke, space);
+    note = new Note(50, 0, 300, windowHeight, 90, 5, 20, 10);
     note.initialize();
 }
 
