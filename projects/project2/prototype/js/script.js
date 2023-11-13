@@ -28,7 +28,7 @@ function setup() {
 
 // Update and display moving notes
 function draw() {
-    background(255);
+    background(0);
     note.draw();
     note.move();
 

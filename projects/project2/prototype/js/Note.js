@@ -1,11 +1,11 @@
 class Note {
-    constructor (startX, startY, endX, endY, angle, stroke, dashLength, space) {
+    constructor (startX, startY, endX, endY, angle, weight, dashLength, space) {
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;
         this.endY = endY;
         this.angle = angle;
-        this.stroke = stroke;
+        this.weight = weight;
         this.dashLength = dashLength;
         this.space = space;
         this.notes = [];
@@ -29,7 +29,8 @@ class Note {
     
     // Draw dashed lines
     draw () {
-        strokeWeight(this.stroke);
+        stroke(255);
+        strokeWeight(this.weight);
         for (let note of this.notes) {
             let endX = note.x + this.dashLength * this.dx;
             let endY = note.y + this.dashLength * this.dy;
