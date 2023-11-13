@@ -21,7 +21,7 @@ function preload() {
 // Initialize the canvas and note object
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    note = new Note(50, 0, 300, windowHeight, 90, 5, 20, 10);
+    note = new Note(100, 0, 300, windowHeight, 90, 5, 20, 10);
     note.initialize();
 }
 

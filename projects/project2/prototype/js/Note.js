@@ -46,10 +46,12 @@ class Note {
             note.y += this.dy;
 
             // Check if note goes beyond the end point
-            if ((this.dx > 0 && note.x > this.endX) || (this.dx < 0 && note.x < this.endX) ||
-                (this.dy > 0 && note.y > this.endY) || (this.dy < 0 && note.y < this.endY)) {
-                note.x = this.startX;
-                note.y = this.startY;
+            if ((this.dx > 0 && note.x > this.endX + this.space) || (this.dx < 0 && note.x < this.startX - this.space) ||
+                (this.dy > 0 && note.y > this.endY + this.space) || (this.dy < 0 && note.y < this.startY - this.space)) {
+                
+                    // Reset the note to start minus one dash length and space
+                note.x = this.startX - this.dashLength * this.dx - this.space * this.dx;
+                note.y = this.startY - this.dashLength * this.dy - this.space * this.dy;
             }
         }
     }
