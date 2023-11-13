@@ -9,6 +9,7 @@
 
 "use strict";
 let note;
+let rectangle
 
 /**
  * Description of preload
@@ -23,13 +24,16 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     note = new Note(100, 0, 300, windowHeight, 90, 5, 20, 10);
     note.initialize();
+    rectangle = new Transformer(100, 100, 50, 30, 45);
 }
 
 
 // Update and display moving notes
 function draw() {
     background(0);
-    note.draw();
     note.move();
+    note.checkCollisionAndReflect(rectangle);
+    note.draw();
+    rectangle.draw();
 
 }
