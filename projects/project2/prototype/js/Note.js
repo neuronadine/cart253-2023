@@ -26,6 +26,8 @@ class Note {
             let y = this.startY + i * dy;
             this.notes.push({ x: x, y: y, dx: dx, dy: dy, angle: this.globalAngle });
         }
+
+        this.notes.forEach(note => note.hasCollided = false);
     }
     
     // Draw dashed lines
@@ -60,13 +62,24 @@ class Note {
 
     checkCollisionAndReflect(rectangle) {
         for (let note of this.notes) {
-            if (rectangle.collidesWith(note)) {
+            let collides = rectangle.collidesWith(note);
 
+            if (collides && !note.hasCollided) {
+                
+                // Play the hit sound only once when the collision happens
+                hitSound.play();
+                note.hasCollided = true;
+            } else if (!collides) {
+                note.hasCollided = false;
+            }
+
+            if (collides) {
                 // Reflect the note's angle based on the angle of incidence
                 let reflectedAngle = 2 * rectangle.angle - note.angle;
                 note.dx = Math.cos(reflectedAngle * Math.PI / 180);
                 note.dy = Math.sin(reflectedAngle * Math.PI / 180);
                 note.angle = reflectedAngle;
+                reflectSound.play(); // Play the reflection sound
             }
         }
     }
