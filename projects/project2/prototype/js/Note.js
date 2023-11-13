@@ -34,7 +34,7 @@ class Note {
         for (let note of this.notes) {
             note.y += 1;
             if (note.y > this.endY) {
-                note.y = this.startY - this.space - this.dashLength;
+                note.y = this.startY - this.dashLength;
             }
         }
     }
