@@ -12,6 +12,8 @@ let note;
 let rectangle;
 let hitSound;
 let reflectSound;
+let osc;
+let synth;
 
 /**
  * Description of preload
@@ -28,6 +30,15 @@ function setup() {
     note = new Note(100, 0, 300, windowHeight, 90, 5, 20, 10);
     note.initialize();
     rectangle = new Transformer(90, 500, 50, 30, 45);
+
+    // Initialize the oscillator
+    osc = new p5.Oscillator();
+    osc.setType('sine');
+    osc.start();
+    osc.amp(0);
+
+    // Initialize the synthesizer
+    synth = new p5.PolySynth();
 }
 
 
@@ -38,5 +49,9 @@ function draw() {
     note.checkCollisionAndReflect(rectangle);
     note.draw();
     rectangle.draw();
+
+    // Manipulate playback rate based on mouse position
+    let newRate = map(mouseX, 0, width, 0.5, 2);
+    hitSound.rate(newRate);
 
 }

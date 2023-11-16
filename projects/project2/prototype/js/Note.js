@@ -65,9 +65,10 @@ class Note {
             let collides = rectangle.collidesWith(note);
 
             if (collides && !note.hasCollided) {
-                
-                // Play the hit sound only once when the collision happens
-                hitSound.play();
+                let speed = Math.sqrt(note.dx * note.dx + note.dy * note.dy);
+                osc.freq(speed * 20 + 200); 
+                osc.amp(0.5, 0.1); 
+                setTimeout(() => osc.amp(0), 100); 
                 note.hasCollided = true;
             } else if (!collides) {
                 note.hasCollided = false;

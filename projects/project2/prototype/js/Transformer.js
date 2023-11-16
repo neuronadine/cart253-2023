@@ -4,7 +4,15 @@ class Transformer {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.angle = angle; // This is the angle of the rectangle itself
+        this.angle = angle; 
+    }
+
+    playSynthNote() {
+        let note = 'C4';
+        let velocity = 0.5;
+        let time = 0;
+        let duration = 1;
+        synth.play(note, velocity, time, duration);
     }
 
     // Method to draw the rectangle
@@ -15,6 +23,10 @@ class Transformer {
         rectMode(CENTER);
         rect(0, 0, this.width, this.height);
         pop(); // Restore the original drawing state
+
+        if (frameCount % 60 === 0) { // Every second, as an example
+            this.playSynthNote();
+        }
     }
 
     // Collision detection with a note
