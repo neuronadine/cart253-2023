@@ -22,13 +22,13 @@ function preload() {
 }
 
 
-// Initialize the canvas and note object
+// Initialize the canvas and objects
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
     // Initialize a simple visualization
-    note = new Note(0, windowHeight / 2, 2, 20);
-    rectangle = new Transformer(windowHeight - 50, 30);
+    movingCircle = new MovingCircle(0, windowHeight / 2, 2, 20);
+    soundBar = new SoundTriggerBar(windowHeight - 50, 30);
 
     // Initialize the oscillator
     osc = new p5.Oscillator();
@@ -44,16 +44,13 @@ function setup() {
 // Update and display moving notes
 function draw() {
     background(0);
-    note.move();
-    rectangle.draw();
-
-    if (rectangle.collidesWith(note)) {
-        rectangle.playSynthNote(); // Play a note when collision happens
+    movingCircle.move();
+    soundBar.draw();
+    if (soundBar.collidesWith(movingCircle)) {
+        soundBar.playSynthNote();
     }
-    note.draw();
-
-    // Manipulate playback rate based on mouse position
+    
+    movingCircle.draw();
     let newRate = map(mouseX, 0, width, 0.5, 2);
     hitSound.rate(newRate);
-
 }

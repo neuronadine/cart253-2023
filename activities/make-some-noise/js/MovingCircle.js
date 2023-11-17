@@ -1,4 +1,4 @@
-class Note {
+class MovingCircle {
     constructor(startX, startY, speed, radius) {
         this.x = startX;
         this.y = startY;

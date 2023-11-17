@@ -1,4 +1,4 @@
-class Transformer {
+class SoundTriggerBar {
     constructor(y, height) {
         this.x = 0;
         this.y = y;
