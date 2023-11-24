@@ -81,6 +81,9 @@ class Note {
                 note.dy = Math.sin(reflectedAngle * Math.PI / 180);
                 note.angle = reflectedAngle;
                 reflectSound.play(); // Play the reflection sound
+
+                // Call the function to modify and generate music
+                modifyAndGenerateMusic();
             }
         }
     }
