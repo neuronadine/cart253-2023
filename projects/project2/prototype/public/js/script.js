@@ -2,12 +2,12 @@
  * Soundscapes
  * Nadine Mohamed
  * 
- * This script creates an interactive canvas where moving dashed lines (notes) 
- * generate a dynamic visual pattern. Users can observe and interact with these 
- * notes, which respond to certain parameters and movements.
  */
 
 "use strict";
+let currentPlayingSample = null;
+let audioInitialized = false;
+let isMusicPlaying = false;
 let note;
 let rectangle;
 let hitSound;
@@ -23,6 +23,21 @@ function preload() {
     reflectSound = loadSound('/assets/sounds/Piano Note C Sound Effect.mp3');
 }
 
+function setupAudio() {
+    osc = new p5.Oscillator();
+    osc.setType('sine');
+    osc.start();
+    osc.amp(0);
+
+    synth = new p5.PolySynth();
+
+    // You might need to manually resume the audio context due to browser restrictions
+    if (getAudioContext().state !== 'running') {
+        getAudioContext().resume();
+    }
+
+    audioInitialized = true;
+}
 
 // Initialize the canvas and note object
 function setup() {
@@ -30,20 +45,13 @@ function setup() {
     note = new Note(100, 0, 300, windowHeight, 90, 5, 20, 10);
     note.initialize();
     rectangle = new Transformer(90, 500, 50, 30, 45);
-
-    // Initialize the oscillator
-    osc = new p5.Oscillator();
-    osc.setType('sine');
-    osc.start();
-    osc.amp(0);
-
-    // Initialize the synthesizer
-    synth = new p5.PolySynth();
 }
-
 
 // Update and display moving notes
 function draw() {
+    // Skip the rest of the function if audio is not initialized
+    if (!audioInitialized) return;
+
     background(0);
     note.move();
     note.checkCollisionAndReflect(rectangle);

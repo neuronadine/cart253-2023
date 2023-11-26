@@ -1,26 +1,34 @@
-// You might need to adjust this path if you're using ES6 modules or bundlers
-const mm = require('@magenta/music');
-
-// Initialize MusicVAE model
-const model = new mm.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
-model.initialize();
-
 function modifyAndGenerateMusic() {
-    // Define input for the model
-    // This is an example; you'll need to tailor it to your specific use case
-    let input = { /* ... */ };
-
-    // Generate music with the model
-    model.sample(input)
-        .then(samples => {
-            // Process and play the generated music
-            playGeneratedMusic(samples);
-        })
-        .catch(error => console.error('Error generating music:', error));
+    if (!isMusicPlaying) {
+        const mvae = new music_vae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
+        mvae.initialize().then(() => {
+            mvae.sample(1).then((samples) => {
+                playGeneratedMusic(samples);
+                isMusicPlaying = true;
+            });
+        }).catch(error => console.error('Error generating music:', error));
+    }
 }
 
-// Function to play the generated music
 function playGeneratedMusic(samples) {
-    // Implementation depends on how you want to play the music
-    // ...
+    if (currentPlayingSample) {
+        // Logic to blend with new sample instead of stopping (if required)
+        // Example: currentPlayingSample.blend(samples[0]);
+    } else {
+        const player = new core.Player();
+        currentPlayingSample = samples[0];
+        player.start(currentPlayingSample);
+    }
+}
+
+function startBlendingMusic() {
+    // Logic for starting music blending (if required)
+}
+
+function stopBlendingMusic() {
+    // Logic for stopping music blending
+    if (currentPlayingSample) {
+        currentPlayingSample.stop(); // Stop the current music sample
+        isMusicPlaying = false;
+    }
 }

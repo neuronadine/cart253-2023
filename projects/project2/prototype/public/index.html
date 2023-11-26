@@ -19,16 +19,36 @@
     <!-- p5.js Libraries -->
     <script src="/js/libraries/p5.min.js"></script>
     <script src="/js/libraries/p5.sound.min.js"></script>
+  </head>
+  <body>
+    <button onclick="setupAudio()">Start Audio</button>
+    <!-- HTML would go here if needed. -->
+    <!-- <script>
+      let model;
+
+      function setupAudio() {
+          // Initialize Magenta model
+          model = new music_vae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
+          model.initialize().then(() => {
+              console.log("Magenta model initialized");
+              // Generate a piece of music
+              model.sample(1).then(samples => {
+                  console.log("Generated music:", samples);
+                  // Play the generated music
+                  const player = new core.Player();
+                  player.start(samples[0]);
+              });
+          }).catch(error => console.error('Error initializing Magenta model:', error));
+
+          // Rest of your audio setup...
+      }
+    </script> -->
+
 
     <!-- My script(s) -->
     <script src="/js/magenta_interaction.js"></script>
     <script src="/js/Note.js"></script>
     <script src="/js/Transformer.js"></script>
     <script src="/js/script.js"></script>
-  </head>
-
-  <body>
-    <!-- HTML would go here if needed. -->
   </body>
-
 </html>

@@ -28,6 +28,7 @@ class Note {
         }
 
         this.notes.forEach(note => note.hasCollided = false);
+        this.isColliding = false;
     }
     
     // Draw dashed lines
@@ -61,30 +62,28 @@ class Note {
     }
 
     checkCollisionAndReflect(rectangle) {
+        let collisionDetected = false;
+
         for (let note of this.notes) {
-            let collides = rectangle.collidesWith(note);
-
-            if (collides && !note.hasCollided) {
-                let speed = Math.sqrt(note.dx * note.dx + note.dy * note.dy);
-                osc.freq(speed * 20 + 200); 
-                osc.amp(0.5, 0.1); 
-                setTimeout(() => osc.amp(0), 100); 
-                note.hasCollided = true;
-            } else if (!collides) {
-                note.hasCollided = false;
+            if (rectangle.collidesWith(note)) {
+                collisionDetected = true;
+                break; // Break as soon as one collision is detected
             }
-
-            if (collides) {
-                // Reflect the note's angle based on the angle of incidence
-                let reflectedAngle = 2 * rectangle.angle - note.angle;
-                note.dx = Math.cos(reflectedAngle * Math.PI / 180);
-                note.dy = Math.sin(reflectedAngle * Math.PI / 180);
-                note.angle = reflectedAngle;
-                reflectSound.play(); // Play the reflection sound
-
-                // Call the function to modify and generate music
+        }
+    
+        if (collisionDetected) {
+            if (collisionDetected && !this.isColliding) {
+                // Play sound and start blending new music when collision starts
+                hitSound.play();  // Play the sound effect only once
+                startBlendingMusic();
                 modifyAndGenerateMusic();
+                this.isColliding = true;
             }
+        } else if (this.isColliding) {
+            // Stop blending and revert to normal music when collision ends
+            stopBlendingMusic();
+            this.isColliding = false;
+            isGeneratingMusic = false; // Reset music generation flag
         }
     }
 
@@ -92,3 +91,5 @@ class Note {
         return note.x < 0 || note.x > windowWidth || note.y < 0 || note.y > windowHeight;
     }
 }
+
+    
