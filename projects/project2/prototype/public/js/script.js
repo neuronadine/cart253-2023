@@ -19,8 +19,8 @@ let synth;
  * Description of preload
 */
 function preload() {
-    hitSound = loadSound('../assets/sounds/Piano Note B Sound Effect.mp3');
-    reflectSound = loadSound('../assets/sounds/Piano Note C Sound Effect.mp3');
+    hitSound = loadSound('/assets/sounds/Piano Note B Sound Effect.mp3');
+    reflectSound = loadSound('/assets/sounds/Piano Note C Sound Effect.mp3');
 }
 
 
