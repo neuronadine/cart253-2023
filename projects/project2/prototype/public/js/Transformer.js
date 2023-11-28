@@ -14,7 +14,7 @@ class Transformer {
         let velocity = 0.5;
         let time = 0;
         let duration = 1;
-        synth.play(note, velocity, time, duration);
+        // synth.play(note, velocity, time, duration);
     }
 
     // Method to draw the rectangle

@@ -74,14 +74,14 @@ class Note {
         if (collisionDetected) {
             if (collisionDetected && !this.isColliding) {
                 // Play sound and start blending new music when collision starts
-                hitSound.play();  // Play the sound effect only once
-                startBlendingMusic();
-                modifyAndGenerateMusic();
+                // hitSound.play();  // Play the sound effect only once
+                // startBlendingMusic();
+                // modifyAndGenerateMusic();
                 this.isColliding = true;
             }
         } else if (this.isColliding) {
             // Stop blending and revert to normal music when collision ends
-            stopBlendingMusic();
+            // stopBlendingMusic();
             this.isColliding = false;
             isGeneratingMusic = false; // Reset music generation flag
         }

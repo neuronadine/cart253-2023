@@ -43,8 +43,8 @@ function draw() {
     rectangle.draw();
 
     // Manipulate playback rate based on mouse position
-    let newRate = map(mouseX, 0, width, 0.5, 2);
-    hitSound.rate(newRate);
+    // let newRate = map(mouseX, 0, width, 0.5, 2);
+    // hitSound.rate(newRate);
 
 }
 

@@ -1,26 +1,23 @@
-
-
 function startMagentaMusic() {
     const musicRNN = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn');
 
     let seed = {
         notes: [
-            { pitch: 60, quantizedStartStep: 0, quantizedEndStep: 2 }, // C4
-            { pitch: 62, quantizedStartStep: 2, quantizedEndStep: 4 }, // D4
-            { pitch: 64, quantizedStartStep: 4, quantizedEndStep: 6 }, // E4
-            { pitch: 65, quantizedStartStep: 6, quantizedEndStep: 8 }, // F4
-            { pitch: 67, quantizedStartStep: 8, quantizedEndStep: 10 }, // G4
-            { pitch: 69, quantizedStartStep: 10, quantizedEndStep: 12 }, // A4
-            { pitch: 71, quantizedStartStep: 12, quantizedEndStep: 14 }, // B4
-            { pitch: 72, quantizedStartStep: 14, quantizedEndStep: 16 }, // C5
+            { pitch: 60, quantizedStartStep: 0, quantizedEndStep: 4 }, // C4 (twinkle)
+            { pitch: 60, quantizedStartStep: 4, quantizedEndStep: 8 }, // C4 (twinkle)
+            { pitch: 67, quantizedStartStep: 8, quantizedEndStep: 12 }, // G4 (little)
+            { pitch: 67, quantizedStartStep: 12, quantizedEndStep: 16 }, // G4 (star)
+            { pitch: 69, quantizedStartStep: 16, quantizedEndStep: 20 }, // A4 (how)
+            { pitch: 69, quantizedStartStep: 20, quantizedEndStep: 24 }, // A4 (I)
+            { pitch: 67, quantizedStartStep: 24, quantizedEndStep: 28 }, // G4 (wonder)
         ],
-        totalQuantizedSteps: 16,
+        totalQuantizedSteps: 32,
         quantizationInfo: { stepsPerQuarter: 4 }
     };
 
 
     musicRNN.initialize().then(() => {
-        musicRNN.continueSequence(seed, 20) // Generate 20 steps based on the seed
+        musicRNN.continueSequence(seed, 32) // Generate 20 steps based on the seed
             .then(continuedSequence => {
                 console.log('Continued sequence:', continuedSequence);
                 playGeneratedMusic(continuedSequence);
@@ -31,14 +28,16 @@ function startMagentaMusic() {
 }
 
 function playGeneratedMusic(sequence) {
-    if (!sequence || !sequence.notes || sequence.notes.length === 0) {
+    if (!sequence || !Array.isArray(sequence.notes) || sequence.notes.length === 0) {
         console.error("No notes in sequence or sequence is undefined.");
+        console.error("Received sequence:", sequence);
         return;
     }
 
     console.log("Playing sequence with notes:", sequence.notes);
 
-    sequence.notes.forEach(note => {
+    sequence.notes.forEach((note, index) => {
+        console.log(`Note ${index}:`, note);
         try {
             let freq = midiToFreq(note.pitch);
             let osc = new p5.Oscillator('sine');
@@ -70,6 +69,21 @@ function playGeneratedMusic(sequence) {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// RETIRED
 function startBlendingMusic() {
     // Logic for starting music blending (if required)
 }
@@ -81,12 +95,6 @@ function stopBlendingMusic() {
         isMusicPlaying = false;
     }
 }
-
-
-
-
-
-
     // const mvae = new music_vae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
     // mvae.initialize().then(() => {
     //     mvae.continueSequence(seed, 20) // Number of steps to generate after the seed
