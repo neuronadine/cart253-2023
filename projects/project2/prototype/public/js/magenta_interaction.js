@@ -1,5 +1,20 @@
+let seed = {
+    notes: [
+        { pitch: 60, quantizedStartStep: 0, quantizedEndStep: 2 }, // C4
+        { pitch: 62, quantizedStartStep: 2, quantizedEndStep: 4 }, // D4
+        { pitch: 64, quantizedStartStep: 4, quantizedEndStep: 6 }, // E4
+        { pitch: 65, quantizedStartStep: 6, quantizedEndStep: 8 }, // F4
+        { pitch: 67, quantizedStartStep: 8, quantizedEndStep: 10 }, // G4
+        { pitch: 69, quantizedStartStep: 10, quantizedEndStep: 12 }, // A4
+        { pitch: 71, quantizedStartStep: 12, quantizedEndStep: 14 }, // B4
+        { pitch: 72, quantizedStartStep: 14, quantizedEndStep: 16 }, // C5
+    ],
+    totalQuantizedSteps: 16,
+    quantizationInfo: { stepsPerQuarter: 4 }
+};
+
 function modifyAndGenerateMusic() {
-    if (!isMusicPlaying) {
+    if (!isMusicPlaying && audioInitialized) {
         const mvae = new music_vae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
         mvae.initialize().then(() => {
             mvae.sample(1).then((samples) => {
@@ -10,16 +25,84 @@ function modifyAndGenerateMusic() {
     }
 }
 
-function playGeneratedMusic(samples) {
-    if (currentPlayingSample) {
-        // Logic to blend with new sample instead of stopping (if required)
-        // Example: currentPlayingSample.blend(samples[0]);
-    } else {
-        const player = new core.Player();
-        currentPlayingSample = samples[0];
-        player.start(currentPlayingSample);
-    }
+function startMagentaMusic() {
+    // const mvae = new music_vae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
+    // mvae.initialize().then(() => {
+    //     mvae.continueSequence(seed, 20) // Number of steps to generate after the seed
+    //         .then(samples => {
+    //             playGeneratedMusic(samples);
+    //         });
+    // }).catch(error => console.error('Error with Magenta:', error));
+
+    const musicRNN = new music_rnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn');
+    musicRNN.initialize().then(() => {
+        musicRNN.continueSequence(seed, 20) // Generate 20 steps based on the seed
+            .then(continuedSequence => {
+                playGeneratedMusic(continuedSequence);
+            });
+    }).catch(error => console.error('Error with Magenta MusicRNN:', error));
+ 
 }
+
+function playGeneratedMusic(continuedSequence) {
+
+    // console.log("Generated samples:", samples);
+    // if (!samples || samples.length === 0 || !samples[0].notes || samples[0].notes.length === 0) return;
+
+    // samples[0].notes.forEach(note => {
+    //     let midiNote = note.pitch;
+    //     let freq = midiToFreq(midiNote);
+    //     let osc = new p5.Oscillator('sine');
+    //     osc.freq(freq);
+    //     osc.start();
+    //     osc.amp(0.5);
+
+    //     // Stop the oscillator after the note duration
+    //     setTimeout(() => {
+    //         osc.stop();
+    //     }, note.duration * 1000); // Convert duration from seconds to milliseconds
+    // });
+
+    // if (!samples || samples.length === 0 || !samples[0].notes || samples[0].notes.length === 0) {
+    //     console.error("No samples or notes generated");
+    //     return;
+    // }
+
+    // console.log("Generated notes:", samples[0].notes);
+
+    // samples[0].notes.forEach(note => {
+    //     let freq = midiToFreq(note.pitch);
+    //     let osc = new p5.Oscillator('sine');
+    //     osc.freq(freq);
+    //     osc.amp(0.5); // Set amplitude
+    //     osc.start();
+
+    //     let noteDuration = (note.quantizedEndStep - note.quantizedStartStep) * (60 / (samples[0].tempos[0].qpm * samples[0].quantizationInfo.stepsPerQuarter));
+    //     setTimeout(() => {
+    //         osc.stop();
+    //         console.log("Note stopped");
+    //     }, noteDuration * 1000); // Duration in milliseconds
+    // });
+
+    if (!continuedSequence.notes || continuedSequence.notes.length === 0) {
+        console.error("No notes in continued sequence");
+        return;
+    }
+
+    console.log("Continued sequence notes:", continuedSequence.notes);
+
+    continuedSequence.notes.forEach(note => {
+        let freq = midiToFreq(note.pitch);
+        let osc = new p5.Oscillator('sine');
+        osc.freq(freq);
+        osc.amp(0.5);
+        osc.start();
+
+        // Calculate the duration for each note
+        let duration = ((note.quantizedEndStep - note.quantizedStartStep) / continuedSequence.quantizationInfo.stepsPerQuarter) * 60 / continuedSequence.tempos[0].qpm;
+        setTimeout(() => osc.stop(), duration * 1000);
+    });
+  }
 
 function startBlendingMusic() {
     // Logic for starting music blending (if required)

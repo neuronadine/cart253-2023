@@ -8,6 +8,8 @@ class Transformer {
     }
 
     playSynthNote() {
+        if (!audioInitialized) return;
+
         let note = 'C4';
         let velocity = 0.5;
         let time = 0;
@@ -24,9 +26,9 @@ class Transformer {
         rect(0, 0, this.width, this.height);
         pop(); // Restore the original drawing state
 
-        if (frameCount % 60 === 0) { // Every second, as an example
-            this.playSynthNote();
-        }
+        // if (frameCount % 60 === 0) { // Every second, as an example
+        //     this.playSynthNote();
+        // }
     }
 
     // Collision detection with a note

@@ -23,22 +23,6 @@ function preload() {
     reflectSound = loadSound('/assets/sounds/Piano Note C Sound Effect.mp3');
 }
 
-function setupAudio() {
-    osc = new p5.Oscillator();
-    osc.setType('sine');
-    osc.start();
-    osc.amp(0);
-
-    synth = new p5.PolySynth();
-
-    // You might need to manually resume the audio context due to browser restrictions
-    if (getAudioContext().state !== 'running') {
-        getAudioContext().resume();
-    }
-
-    audioInitialized = true;
-}
-
 // Initialize the canvas and note object
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -63,3 +47,50 @@ function draw() {
     hitSound.rate(newRate);
 
 }
+
+
+function initializeCanvasAndMusic() {
+    if (!audioInitialized) {
+        userStartAudio().then(() => {
+            audioInitialized = true;
+            startMagentaMusic(); // Start generating music with Magenta
+        });
+    } else {
+        startMagentaMusic(); // Audio already initialized, just start Magenta
+    }
+}
+
+
+
+
+
+
+// Deprecated
+// setupAudio() {
+//     userStartAudio().then(() => {
+//         osc = new p5.Oscillator('sine');
+//         osc.amp(0);
+//         osc.start();
+    
+//         synth = new p5.PolySynth();
+    
+//         audioInitialized = true;
+    
+//         // Optional: Start music generation immediately after audio setup
+//         startMagentaMusic();
+//       });
+
+//     osc = new p5.Oscillator();
+//     osc.setType('sine');
+//     osc.start();
+//     osc.amp(0);
+
+//     synth = new p5.PolySynth();
+
+//     // You might need to manually resume the audio context due to browser restrictions
+//     if (getAudioContext().state !== 'running') {
+//         getAudioContext().resume();
+//     }
+
+//     audioInitialized = true;
+// }
