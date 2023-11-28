@@ -31,21 +31,29 @@ function startMagentaMusic() {
 }
 
 function playGeneratedMusic(sequence) {
-    if (!sequence.notes || sequence.notes.length === 0) {
-        console.error("No notes in sequence");
+    if (!sequence || !sequence.notes || sequence.notes.length === 0) {
+        console.error("No notes in sequence or sequence is undefined.");
         return;
     }
 
-    sequence.notes.forEach(note => {
-        let freq = midiToFreq(note.pitch);
-        let osc = new p5.Oscillator('sine');
-        osc.freq(freq);
-        osc.amp(0.5);
-        osc.start();
+    console.log("Playing sequence with notes:", sequence.notes);
 
-        // Calculate the duration for each note
-        let duration = ((note.quantizedEndStep - note.quantizedStartStep) / sequence.quantizationInfo.stepsPerQuarter) * 60 / sequence.tempos[0].qpm;
-        setTimeout(() => osc.stop(), duration * 1000);
+    sequence.notes.forEach(note => {
+        try {
+            let freq = midiToFreq(note.pitch);
+            let osc = new p5.Oscillator('sine');
+            osc.freq(freq);
+            osc.amp(0.5);
+            osc.start();
+
+            let duration = ((note.quantizedEndStep - note.quantizedStartStep) / sequence.quantizationInfo.stepsPerQuarter) * 60 / sequence.tempos[0].qpm;
+            setTimeout(() => {
+                osc.stop();
+                console.log(`Note stopped: pitch ${note.pitch}, duration ${duration}`);
+            }, duration * 1000);
+        } catch (error) {
+            console.error("Error playing note:", error);
+        }
     });
   }
 
