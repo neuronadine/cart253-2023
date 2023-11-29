@@ -17,7 +17,7 @@ function startMagentaMusic() {
 
 
     musicRNN.initialize().then(() => {
-        musicRNN.continueSequence(seed, 32) // Generate 20 steps based on the seed
+        musicRNN.continueSequence(seed, 100) // Generate 20 steps based on the seed
             .then(continuedSequence => {
                 console.log('Continued sequence:', continuedSequence);
                 playGeneratedMusic(continuedSequence);
@@ -36,23 +36,29 @@ function playGeneratedMusic(sequence) {
 
     console.log("Playing sequence with notes:", sequence.notes);
 
+    let cumulativeTime = 0;
+    const stepsPerSecond = sequence.tempos[0].qpm / 60 * sequence.quantizationInfo.stepsPerQuarter;
+    
     sequence.notes.forEach((note, index) => {
-        console.log(`Note ${index}:`, note);
-        try {
+        const noteStart = note.quantizedStartStep / stepsPerSecond * 1000; // Start time in milliseconds
+        const noteEnd = note.quantizedEndStep / stepsPerSecond * 1000; // End time in milliseconds
+        const noteDuration = noteEnd - noteStart; // Duration of the note in milliseconds
+
+        setTimeout(() => {
+            console.log(`Note ${index} playing: pitch ${note.pitch}`);
             let freq = midiToFreq(note.pitch);
             let osc = new p5.Oscillator('sine');
             osc.freq(freq);
             osc.amp(0.5);
             osc.start();
 
-            let duration = ((note.quantizedEndStep - note.quantizedStartStep) / sequence.quantizationInfo.stepsPerQuarter) * 60 / sequence.tempos[0].qpm;
             setTimeout(() => {
                 osc.stop();
-                console.log(`Note stopped: pitch ${note.pitch}, duration ${duration}`);
-            }, duration * 1000);
-        } catch (error) {
-            console.error("Error playing note:", error);
-        }
+                console.log(`Note ${index} stopped: pitch ${note.pitch}`);
+            }, noteDuration);
+        }, cumulativeTime);
+
+        cumulativeTime += noteDuration;
     });
   }
 
