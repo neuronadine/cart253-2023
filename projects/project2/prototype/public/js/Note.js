@@ -11,6 +11,7 @@ class Note {
         this.notes = [];
 
         this.initialize();
+        this.magenta = new Magenta();
     }
 
     // Initialize an array of notes
@@ -73,30 +74,16 @@ class Note {
     
         if (collisionDetected) {
             if (collisionDetected && !this.isColliding) {
-                this.startMusicGeneration();
+                this.magenta.startMusicGeneration();
                 this.isColliding = true;
             }
         } else if (!collisionDetected && this.isColliding) {
-            this.stopMusicGeneration();
+            this.magenta.stopMusicGeneration();
             this.isColliding = false;
         }
     }
 
-    startMusicGeneration() {
-        // Logic to start music generation
-        if (!isMusicPlaying && audioInitialized) {
-            modifyAndGenerateMusic();
-        }
-    }
 
-    stopMusicGeneration() {
-        // Logic to stop music generation
-        if (currentPlayingSample) {
-            currentPlayingSample.stop();
-            isMusicPlaying = false;
-        }
-    }
-    
     isOffScreen(note) {
         return note.x < 0 || note.x > windowWidth || note.y < 0 || note.y > windowHeight;
     }
