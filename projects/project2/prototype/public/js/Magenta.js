@@ -2,7 +2,8 @@ class Magenta {
     constructor() {
         this.isPlaying = false;
         this.audioInitialized = false;
-        this.currentPlayingSample = null;
+        this.activeOscillators = [];
+        this.noteTimeouts = [];
     }
 
     initializeAudio() {
@@ -16,10 +17,18 @@ class Magenta {
     }
 
     stopMusicGeneration() {
-        if (this.currentPlayingSample) {
-            this.currentPlayingSample.stop();
-            this.isPlaying = false;
-        }
+        console.log("Stopping Music Generation");
+        this.stopActiveOscillators();
+        this.clearNoteTimeouts();
+        this.isPlaying = false;
+    }
+
+    stopActiveOscillators() {
+        this.activeOscillators.forEach(osc => {
+            console.log("Stopping oscillator");
+            osc.stop();
+        });
+        this.activeOscillators = [];
     }
 
     modifyAndGenerateMusic() {
@@ -32,7 +41,15 @@ class Magenta {
         }).catch(error => console.error('Error generating music:', error));
     }
 
+    clearNoteTimeouts() {
+        this.noteTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+        this.noteTimeouts = [];
+    }
+
     playGeneratedMusic(sequence) {
+        this.stopActiveOscillators();
+        this.clearNoteTimeouts();
+
         if (!sequence || !Array.isArray(sequence.notes) || sequence.notes.length === 0) {
             console.error("No notes in sequence or sequence is undefined.");
             console.error("Received sequence:", sequence);
@@ -49,21 +66,37 @@ class Magenta {
             const noteEnd = note.quantizedEndStep / stepsPerSecond * 1000; // End time in milliseconds
             const noteDuration = noteEnd - noteStart; // Duration of the note in milliseconds
     
-            setTimeout(() => {
-                console.log(`Note ${index} playing: pitch ${note.pitch}`);
+            let timeoutId = setTimeout(() => {
                 let freq = midiToFreq(note.pitch);
                 let osc = new p5.Oscillator('sine');
+                this.activeOscillators.push(osc);
                 osc.freq(freq);
                 osc.amp(0.5);
                 osc.start();
-    
+
                 setTimeout(() => {
                     osc.stop();
                     console.log(`Note ${index} stopped: pitch ${note.pitch}`);
                 }, noteDuration);
             }, cumulativeTime);
-    
+
+            this.noteTimeouts.push(timeoutId); // Store the timeout ID
             cumulativeTime += noteDuration;
+            // setTimeout(() => {
+            //     console.log(`Note ${index} playing: pitch ${note.pitch}`);
+            //     let freq = midiToFreq(note.pitch);
+            //     let osc = new p5.Oscillator('sine');
+            //     this.activeOscillators.push(osc);
+            //     osc.freq(freq);
+            //     osc.amp(0.5);
+            //     osc.start();
+    
+            //     setTimeout(() => {
+            //         osc.stop();
+            //         console.log(`Note ${index} stopped: pitch ${note.pitch}`);
+            //     }, noteDuration);
+            // }, cumulativeTime);
+            // cumulativeTime += noteDuration;
         });
       }
 

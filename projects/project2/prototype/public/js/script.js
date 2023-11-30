@@ -24,6 +24,7 @@ function setup() {
     note.initialize();
     rectangle = new Transformer(90, 500, 50, 30, 45);
     magenta = new Magenta();
+    // magenta.initializeAudio();
 }
 
 // Update and display moving notes

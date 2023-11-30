@@ -63,21 +63,14 @@ class Note {
     }
 
     checkCollisionAndReflect(rectangle) {
-        let collisionDetected = false;
+        let collisionDetected = this.notes.some(note => rectangle.collidesWith(note));
+        console.log("Collision Detected:", collisionDetected);
 
-        for (let note of this.notes) {
-            if (rectangle.collidesWith(note)) {
-                collisionDetected = true;
-                break;
-            }
-        }
-    
-        if (collisionDetected) {
-            if (!this.isColliding) {
-                this.magenta.startMusicGeneration();
-                this.isColliding = true;
-            }
-        } else if (this.isColliding) {
+        if (collisionDetected && !this.isColliding) {
+            this.magenta.startMusicGeneration();
+            this.isColliding = true;
+        } else if (!collisionDetected && this.isColliding) {
+            console.log("Stopping music due to no collision");
             this.magenta.stopMusicGeneration();
             this.isColliding = false;
         }

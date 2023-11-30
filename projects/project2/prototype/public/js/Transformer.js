@@ -67,6 +67,8 @@ class Transformer {
 
     mouseReleased() {
         this.isDragging = false;
+        note.checkCollisionAndReflect(this);
+        console.log("Mouse released");
     }
 
     mouseOver(px, py) {
