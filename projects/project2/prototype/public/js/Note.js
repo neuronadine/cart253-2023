@@ -67,26 +67,36 @@ class Note {
         for (let note of this.notes) {
             if (rectangle.collidesWith(note)) {
                 collisionDetected = true;
-                break; // Break as soon as one collision is detected
+                break;
             }
         }
     
         if (collisionDetected) {
             if (collisionDetected && !this.isColliding) {
-                // Play sound and start blending new music when collision starts
-                // hitSound.play();  // Play the sound effect only once
-                // startBlendingMusic();
-                // modifyAndGenerateMusic();
+                this.startMusicGeneration();
                 this.isColliding = true;
             }
-        } else if (this.isColliding) {
-            // Stop blending and revert to normal music when collision ends
-            // stopBlendingMusic();
+        } else if (!collisionDetected && this.isColliding) {
+            this.stopMusicGeneration();
             this.isColliding = false;
-            isGeneratingMusic = false; // Reset music generation flag
         }
     }
 
+    startMusicGeneration() {
+        // Logic to start music generation
+        if (!isMusicPlaying && audioInitialized) {
+            modifyAndGenerateMusic();
+        }
+    }
+
+    stopMusicGeneration() {
+        // Logic to stop music generation
+        if (currentPlayingSample) {
+            currentPlayingSample.stop();
+            isMusicPlaying = false;
+        }
+    }
+    
     isOffScreen(note) {
         return note.x < 0 || note.x > windowWidth || note.y < 0 || note.y > windowHeight;
     }

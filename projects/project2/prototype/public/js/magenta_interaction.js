@@ -67,15 +67,13 @@ function playGeneratedMusic(sequence) {
 
 
   function modifyAndGenerateMusic() {
-    if (!isMusicPlaying && audioInitialized) {
-        const mvae = new mm.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
-        mvae.initialize().then(() => {
-            mvae.sample(1).then((samples) => {
-                playGeneratedMusic(samples);
-                isMusicPlaying = true;
-            });
-        }).catch(error => console.error('Error generating music:', error));
-    }
+    const mvae = new mm.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small');
+    mvae.initialize().then(() => {
+        mvae.sample(1).then((samples) => {
+            playGeneratedMusic(samples[0]);
+            isMusicPlaying = true;
+        });
+    }).catch(error => console.error('Error generating music:', error));
 }
 
 
