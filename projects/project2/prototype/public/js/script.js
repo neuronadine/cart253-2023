@@ -11,9 +11,7 @@ let hitSound;
 let reflectSound;
 let magenta;
 
-/**
- * Description of preload
-*/
+//
 function preload() {
     hitSound = loadSound('/assets/sounds/Piano Note B Sound Effect.mp3');
     reflectSound = loadSound('/assets/sounds/Piano Note C Sound Effect.mp3');
@@ -25,16 +23,12 @@ function setup() {
     note = new Note(100, 0, 300, windowHeight, 90, 5, 20, 10);
     note.initialize();
     rectangle = new Transformer(90, 500, 50, 30, 45);
-
-    // Initialize the Magenta class instance
     magenta = new Magenta();
 }
 
 // Update and display moving notes
 function draw() {
-    // Skip the rest of the function if audio is not initialized
     if (!magenta.audioInitialized) return;
-
     background(0);
     note.move();
     note.checkCollisionAndReflect(rectangle);
@@ -52,4 +46,16 @@ function initializeCanvasAndMusic() {
     } else {
         magenta.startMagentaMusic();
     }
+}
+
+function mousePressed() {
+    rectangle.mousePressed(mouseX, mouseY);
+}
+
+function mouseDragged() {
+    rectangle.mouseDragged(mouseX, mouseY);
+}
+
+function mouseReleased() {
+    rectangle.mouseReleased();
 }

@@ -4,7 +4,10 @@ class Transformer {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.angle = angle; 
+        this.angle = angle;
+        this.isDragging = false;
+        this.offsetX = 0;
+        this.offsetY = 0;
     }
 
     playSynthNote() {
@@ -45,5 +48,32 @@ class Transformer {
         let halfWidth = this.width / 2;
         let halfHeight = this.height / 2;
         return rotatedX >= -halfWidth && rotatedX <= halfWidth && rotatedY >= -halfHeight && rotatedY <= halfHeight;
+    }
+
+    mousePressed(px, py) {
+        if (this.mouseOver(px, py)) {
+            this.isDragging = true;
+            this.offsetX = this.x - px;
+            this.offsetY = this.y - py;
+        }
+    }
+
+    mouseDragged(px, py) {
+        if (this.isDragging) {
+            this.x = px + this.offsetX;
+            this.y = py + this.offsetY;
+        }
+    }
+
+    mouseReleased() {
+        this.isDragging = false;
+    }
+
+    mouseOver(px, py) {
+        // Check if mouse is over the rectangle
+        return px > this.x - this.width / 2 && 
+               px < this.x + this.width / 2 &&
+               py > this.y - this.height / 2 && 
+               py < this.y + this.height / 2;
     }
 }

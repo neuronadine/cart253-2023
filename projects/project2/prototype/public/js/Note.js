@@ -73,11 +73,11 @@ class Note {
         }
     
         if (collisionDetected) {
-            if (collisionDetected && !this.isColliding) {
+            if (!this.isColliding) {
                 this.magenta.startMusicGeneration();
                 this.isColliding = true;
             }
-        } else if (!collisionDetected && this.isColliding) {
+        } else if (this.isColliding) {
             this.magenta.stopMusicGeneration();
             this.isColliding = false;
         }
