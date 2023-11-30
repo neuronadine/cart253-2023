@@ -71,11 +71,10 @@ class Note {
             this.isColliding = true;
         } else if (!collisionDetected && this.isColliding) {
             console.log("Stopping music due to no collision");
-            this.magenta.stopMusicGeneration();
+            this.magenta.stopMusicGeneration(true);
             this.isColliding = false;
         }
     }
-
 
     isOffScreen(note) {
         return note.x < 0 || note.x > windowWidth || note.y < 0 || note.y > windowHeight;
