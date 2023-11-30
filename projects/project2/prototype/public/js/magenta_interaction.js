@@ -15,9 +15,12 @@ function startMagentaMusic() {
         quantizationInfo: { stepsPerQuarter: 4 }
     };
 
+    // control model randomness
+    const temperature = 1.5;
 
+    // Generate steps based on the seed
     musicRNN.initialize().then(() => {
-        musicRNN.continueSequence(seed, 100) // Generate 20 steps based on the seed
+        musicRNN.continueSequence(seed, 200, temperature) 
             .then(continuedSequence => {
                 console.log('Continued sequence:', continuedSequence);
                 playGeneratedMusic(continuedSequence);
