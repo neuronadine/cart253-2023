@@ -77,5 +77,5 @@ class Transformer {
                px < this.x + this.width / 2 &&
                py > this.y - this.height / 2 && 
                py < this.y + this.height / 2;
-    }
+    } 
 }
