@@ -20,10 +20,10 @@ function preload() {
 // Initialize the canvas and note object
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    note = new Note(100, 0, 300, windowHeight, 90, 5, 20, 10);
+    magenta = new Magenta();
+    note = new Note(100, 0, 300, windowHeight, 90, 5, 20, 10, magenta);
     note.initialize();
     rectangle = new Transformer(90, 500, 50, 30, 45);
-    magenta = new Magenta();
     // magenta.initializeAudio();
 }
 

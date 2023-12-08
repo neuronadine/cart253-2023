@@ -1,5 +1,5 @@
 class Note {
-    constructor (startX, startY, endX, endY, angle, weight, dashLength, space) {
+    constructor (startX, startY, endX, endY, angle, weight, dashLength, space, magentaInstance) {
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;
@@ -11,7 +11,7 @@ class Note {
         this.notes = [];
 
         this.initialize();
-        this.magenta = new Magenta();
+        this.magenta = magentaInstance;
     }
 
     // Initialize an array of notes

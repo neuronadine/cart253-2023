@@ -3,7 +3,7 @@ class Magenta {
         this.isPlaying = false; // Track if music is currently playing
         this.audioInitialized = false; // Track if music has been initialized
         this.activeOscillators = []; // Stores active oscillators
-        this.noteTimeouts = []; // Stores timeouts for scheduled notes
+        this._noteTimeouts = []; // Stores timeouts for scheduled notes
     }
 
     // Initialize audio playback on-click
@@ -14,13 +14,15 @@ class Magenta {
     // Initialize audio generation on-click
     startMusicGeneration() {
         if (!this.isPlaying && this.audioInitialized) {
+            this.isPlaying = true;
             this.modifyAndGenerateMusic();
         }
     }
 
     // Stops all oscillators immediatley and logs the action for each
-    stopMusicGeneration(immediate = false) {
+    stopMusicGeneration() {
         console.log("Stopping Music Generation");
+
         this.activeOscillators.forEach(osc => {
             osc.stop();
             console.log("Immediately stopping oscillator");
@@ -43,16 +45,18 @@ class Magenta {
         }).catch(error => console.error('Error generating music:', error));
     }
 
-    
+
     clearNoteTimeouts() {
-        this.noteTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
-        this.noteTimeouts = [];
+        if (this._noteTimeouts.length === 0) {
+            console.warn("Warning: noteTimeouts array is unexpectedly empty.");
+        }
+
+        console.log(`Clearing ${this._noteTimeouts.length} note timeouts`);
+        this._noteTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+        this._noteTimeouts = [];
     }
 
     playGeneratedMusic(sequence) {
-        this.stopActiveOscillators();
-        this.clearNoteTimeouts();
-
         if (!sequence || !Array.isArray(sequence.notes) || sequence.notes.length === 0) {
             console.error("No notes in sequence or sequence is undefined.");
             console.error("Received sequence:", sequence);
@@ -61,31 +65,43 @@ class Magenta {
     
         console.log("Playing sequence with notes:", sequence.notes);
     
-        // let cumulativeTime = 0;
-        const stepsPerSecond = sequence.tempos[0].qpm / 60 * sequence.quantizationInfo.stepsPerQuarter;
+        // Calculate the time in milliseconds for each quarter step
+        const timePerStep = 60 / sequence.tempos[0].qpm * 1000 / sequence.quantizationInfo.stepsPerQuarter;
+        const fixedDelay = 50;
         
         sequence.notes.forEach((note, index) => {
+            // Calculate the start time and duration of each note in milliseconds
+            let noteStartTime = note.quantizedStartStep * timePerStep + fixedDelay * index;
+            let noteDuration = (note.quantizedEndStep - note.quantizedStartStep) * timePerStep;
 
-            let noteDuration = ((note.quantizedEndStep - note.quantizedStartStep) / sequence.quantizationInfo.stepsPerQuarter) * 60 / sequence.tempos[0].qpm * 1000;
-
+            // Playes each note at the scheduled delay
             let timeoutId = setTimeout(() => {
-                let freq = midiToFreq(note.pitch);
-                let osc = new p5.Oscillator('sine');
+
+                // Convert MIDI pitch of the note to frequency
+                let freq = midiToFreq(note.pitch); 
+                // Creates new oscillator to generate the sound wave
+                let osc = new p5.Oscillator('sine'); 
                 osc.freq(freq);
                 osc.amp(0.5);
                 osc.start();
 
+                console.log(`Note started index ${index}, pitch ${note.pitch}, frequency ${freq}`);
+                // tracks oscillator
                 this.activeOscillators.push(osc);
 
+                // Schedule the end of the note
                 let stopTimeoutId = setTimeout(() => {
                     osc.stop();
                     console.log(`Note ${index} stopped: pitch ${note.pitch}`);
                 }, noteDuration);
 
-                this.noteTimeouts.push(stopTimeoutId);
-            }, noteDuration * index); // Note: Adjust this to control the delay between notes
+                this._noteTimeouts.push(stopTimeoutId);
+                console.log(`Added stopTimeoutId: ${stopTimeoutId}, Total Timeouts: ${this._noteTimeouts.length}`);
+            }, noteStartTime); // Note: Adjust this to control the delay between notes
 
-            this.noteTimeouts.push(timeoutId);
+            // tracks timeouts
+            this._noteTimeouts.push(timeoutId);
+            console.log(`Added timeoutId: ${timeoutId}, Total Timeouts: ${this._noteTimeouts.length}`);
 
         });
       }
